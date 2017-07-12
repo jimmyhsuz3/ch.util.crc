@@ -3,7 +3,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import ch.util.crc.CRCUtil;
-public class CRCTest{
+public class CRCTest {
 	private final List<String> filePathList = new ArrayList<String>();
 	{
 		filePathList.add("D:\\vm\\MSEdge - Win10_preview.ova");

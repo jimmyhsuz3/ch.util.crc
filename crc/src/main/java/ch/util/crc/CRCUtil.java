@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import org.apache.commons.io.FileUtils;
-public class CRCUtil{
+public class CRCUtil {
 	public static class CRCValue {
 		private long value;
 		private long time;

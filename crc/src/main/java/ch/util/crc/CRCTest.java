@@ -12,6 +12,9 @@ public class CRCTest{
 		filePathList.add("C:\\Users\\jimmy.shu\\Desktop\\test_vm_share\\CRCUtil_.java");
 		filePathList.add("C:\\Users\\jimmy.shu\\Desktop\\vm\\IE11.Win8.1.For.Windows.VirtualBox\\IE11 - Win8.1.ova");
 		filePathList.add("C:\\Users\\jimmy.shu\\Desktop\\test_vm_share\\TortoiseSVN-1.9.5.27581-x64-svn-1.9.5.msi");
+		filePathList.add("D:\\vm\\IE11 - Win8.1.ova");
+		filePathList.add("D:\\vm\\ubuntu-16.04.2-desktop-amd64.iso");
+		filePathList.add("C:\\Users\\jimmy.shu\\Desktop\\vm\\ubuntu-16.04.2-desktop-amd64.iso");
 	}
 	public List<String[]> test(){
 		List<String[]> crcList = new ArrayList<String[]>();
@@ -23,6 +26,9 @@ public class CRCTest{
 		crcList.add(testFile(filePathList.get(3)));
 		crcList.add(testFile(filePathList.get(4)));
 		crcList.add(testFile(filePathList.get(5)));
+		crcList.add(testFile(filePathList.get(6)));
+		crcList.add(testFile(filePathList.get(7)));
+		crcList.add(testFile(filePathList.get(8)));
 		return crcList;
 	}
 	private String[] testStream(String filePath){

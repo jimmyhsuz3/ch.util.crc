@@ -33,6 +33,11 @@ public class CRCTest2 {
 				"C:/Users/jimmy.shu/git/test-parent/parent/cxf/.gitignore",
 				"C:/Users/jimmy.shu/git/test-parent/parent/simpleweb/.gitignore");
 		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
+				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
+				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_");
+		add("C:/Users/jimmy.shu/git/ch-memo/a/.profile",
+				"C:/Users/jimmy.shu/.profile");
+		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
 				"C:/Users/jimmy.shu/Desktop/保存/a1_RabbitMQ");
 		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
 				"C:/Users/jimmy.shu/Desktop/保存/a1_RabbitMQ(0706.0611).txt");

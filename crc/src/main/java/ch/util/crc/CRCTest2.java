@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class CRCTest2 {
 	private List<String[]> testlist = new ArrayList<String[]>();
 	private List<String> deleteFiles = new ArrayList<String>();
+	private java.util.Map<String, String[]> matchMap = new java.util.LinkedHashMap<String, String[]>();
 	public static void main(String[] args){
 		new CRCTest2().test();
 		
@@ -24,6 +25,20 @@ public class CRCTest2 {
 		return false;
 	}
 	private CRCTest2(){
+		put("C:/Users/jimmy.shu/git/ch-memo/b/sample-pom.xml",
+				"D:/sts/workspace/samples/pom.xml");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/java_first_spring_support-pom.xml",
+				"D:/sts/workspace/samples/java_first_spring_support/pom.xml");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/cxf-servlet.xml",
+				"D:/sts/workspace/samples/java_first_spring_support/src/main/webapp/WEB-INF/cxf-servlet.xml");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/client-beans.xml",
+				"D:/sts/workspace/samples/java_first_spring_support/src/main/resources/client-beans.xml");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/HelloWorld.java",
+				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/HelloWorld.java");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/HelloWorldImpl.java",
+				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/HelloWorldImpl.java");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/XRayType.java",
+				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/XRayType.java");
 		add("C:/Users/jimmy.shu/git/test-parent/parent/.gitignore");
 		add("C:/Users/jimmy.shu/git/crc/crc/.gitignore",
 				"C:/Users/jimmy.shu/git/test-mongodb/mongodb/.gitignore",
@@ -32,6 +47,8 @@ public class CRCTest2 {
 		add("C:/Users/jimmy.shu/git/test-parent/parent/axis2/.gitignore",
 				"C:/Users/jimmy.shu/git/test-parent/parent/cxf/.gitignore",
 				"C:/Users/jimmy.shu/git/test-parent/parent/simpleweb/.gitignore");
+		add("C:/Users/jimmy.shu/git/ch-memo/a/.gitignore",
+				"C:/Users/jimmy.shu/git/ch-memo/b/.gitignore");
 		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
 				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
 				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_");
@@ -51,6 +68,18 @@ public class CRCTest2 {
 				"C:/Users/jimmy.shu/Desktop/保存/a4_git_porcelain.txt");
 	}
 	private void test(){
+		for (String target : matchMap.keySet()){
+			String[] paths = matchMap.get(target);
+			String[] allPaths = new String[1 + paths.length];
+			allPaths[0] = target;
+			for (int i = 1; i <= paths.length; i++)
+				allPaths[i] = paths[i-1];
+			boolean match = match(allPaths);
+			System.out.println(String.format("%s = %s", target, match));
+			if (!match)
+				throw new RuntimeException("matchMap not match!");
+		}
+		System.out.println("-------------------------------------------------------");
 		Scanner s = null;
 		try {
 			s = new Scanner(System.in);
@@ -80,5 +109,8 @@ public class CRCTest2 {
 	}
 	private void add(String...  paths){
 		testlist.add(paths);
+	}
+	private void put(String target, String...  paths){
+		matchMap.put(target, paths);
 	}
 }

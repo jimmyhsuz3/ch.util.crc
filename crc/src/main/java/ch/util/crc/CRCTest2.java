@@ -39,6 +39,7 @@ public class CRCTest2 {
 				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/HelloWorldImpl.java");
 		put("C:/Users/jimmy.shu/git/ch-memo/b/XRayType.java",
 				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/XRayType.java");
+		put("C:/Users/jimmy.shu/git/ch-memo/a/note0720.xlsx", "C:/Users/jimmy.shu/Desktop/保存/活頁簿1.xlsx");
 		add("C:/Users/jimmy.shu/git/test-parent/parent/.gitignore");
 		add("C:/Users/jimmy.shu/git/crc/crc/.gitignore",
 				"C:/Users/jimmy.shu/git/test-mongodb/mongodb/.gitignore",

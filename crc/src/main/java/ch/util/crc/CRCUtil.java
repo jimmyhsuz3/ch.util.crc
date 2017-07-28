@@ -45,6 +45,29 @@ public class CRCUtil {
 		testCRC.update(b);
 		return new CRCValue(testCRC.getValue(), System.currentTimeMillis() - start);
 	}
+	public static CRCValue CRCText(File file){
+		long start = System.currentTimeMillis();
+		CRC32 testCRC = new CRC32();
+		java.io.BufferedReader reader = null;
+		try {
+			reader = new java.io.BufferedReader(new java.io.FileReader(file));
+			String line = null;
+			while ((line = reader.readLine()) != null)
+				testCRC.update(line.getBytes());
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (reader != null)
+				try {
+					reader.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+		}
+		return new CRCValue(testCRC.getValue(), System.currentTimeMillis() - start);
+	}
 	private static long crc32File(File file){
 		try {
 			return FileUtils.checksumCRC32(file);

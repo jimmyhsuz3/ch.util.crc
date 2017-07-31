@@ -33,7 +33,7 @@ public class CRCTest2 {
 		return false;
 	}
 	private CRCTest2(){
-		System.out.println(java.util.Arrays.asList(7, 2, 2));
+		System.out.println(java.util.Arrays.asList(7, 2, 2, 1, 6));
 		put("C:/Users/jimmy.shu/git/ch-memo/b/sample-pom.xml",
 				"D:/sts/workspace/samples/pom.xml");
 		put("C:/Users/jimmy.shu/git/ch-memo/b/java_first_spring_support-pom.xml",
@@ -49,7 +49,9 @@ public class CRCTest2 {
 		put("C:/Users/jimmy.shu/git/ch-memo/b/XRayType.java",
 				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/XRayType.java");
 		put("C:/Users/jimmy.shu/git/ch-memo/a/note0720.xlsx", "C:/Users/jimmy.shu/Desktop/保存/xls(2)/活頁簿1.xlsx");
-		put("C:/Users/jimmy.shu/git/ch-memo/b/RedisTest(0725.0614).java", "C:/Users/jimmy.shu/Desktop/保存/xls(2)/RedisTest.java");
+		put("C:/Users/jimmy.shu/git/ch-memo/b/RedisTest(0725.0614).java",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/RedisTest.java",
+				"C:/Users/jimmy.shu/git/ch-test-redis/src/main/java/ch/test/redis/RedisTest.java");
 		putText("C:/Users/jimmy.shu/Desktop/保存/TestProfileSearchService(0713).java",
 				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/TestProfileSearchService.java");
 		put("C:/Users/jimmy.shu/Desktop/保存/TestSearchEngineService(0713).java",
@@ -64,23 +66,23 @@ public class CRCTest2 {
 				"C:/Users/jimmy.shu/git/test-parent/parent/simpleweb/.gitignore");
 		add("C:/Users/jimmy.shu/git/ch-memo/a/.gitignore",
 				"C:/Users/jimmy.shu/git/ch-memo/b/.gitignore");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
+		put("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
 				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
 				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_");
 		add("C:/Users/jimmy.shu/git/ch-memo/a/.profile",
 				"C:/Users/jimmy.shu/.profile");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
-				"C:/Users/jimmy.shu/Desktop/保存/a1_RabbitMQ");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
-				"C:/Users/jimmy.shu/Desktop/保存/a1_RabbitMQ(0706.0611).txt");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_",
-				"C:/Users/jimmy.shu/Desktop/保存/a1_RabbitMQ_");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a2_804.txt",
-				"C:/Users/jimmy.shu/Desktop/保存/a2_804.txt");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a3_git_tree.txt",
-				"C:/Users/jimmy.shu/Desktop/保存/a3_git_tree.txt");
-		add("C:/Users/jimmy.shu/git/ch-memo/a/a4_git_porcelain.txt",
-				"C:/Users/jimmy.shu/Desktop/保存/a4_git_porcelain.txt");
+		putText("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ");
+		putText("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0706.0611).txt");
+		putText("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ_");
+		put("C:/Users/jimmy.shu/git/ch-memo/a/a2_804.txt",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a2_804.txt");
+		putText("C:/Users/jimmy.shu/git/ch-memo/a/a3_git_tree.txt",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a3_git_tree.txt");
+		put("C:/Users/jimmy.shu/git/ch-memo/a/a4_git_porcelain.txt",
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a4_git_porcelain.txt");
 	}
 	private void test(){
 		for (String target : matchMap.keySet()){

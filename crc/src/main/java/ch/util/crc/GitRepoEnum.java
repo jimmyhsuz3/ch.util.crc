@@ -5,6 +5,10 @@ public enum GitRepoEnum {
 			),
 	ch_util_crc("https://github.com/jimmyhsuz3/ch.util.crc.git", "jimmyshu", "jimmy.shu@104.com.tw"
 			, new String[]{"e6a488767513a22daee7c0b12ccb1cf384bce53b", "2017-08-01 16:35:37"}
+			, new String[]{"ea943c31c68d4100f60153d649b25348ea38eb0c", "2017-8-2 13:31:04"}
+			, new String[]{"285f6be12d30a998996a27152e58588a28b3ff91", "2017-8-2 13:54:33"}
+			, new String[]{"dba10bdd055575df209e822686aa56755b4e0078", "2017-08-02 14:07:24"}
+			, new String[]{"c8c75db11a6bde67aeece426b16f921ddb5408a5", "2017-08-02 14:51:50"}
 			),
 	ch_test_http("https://github.com/jimmyhsuz3/ch-test-http.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"216a62a68373e8bf75e3bde7613b8870372d66a8", "2017-08-01 14:34:35"}

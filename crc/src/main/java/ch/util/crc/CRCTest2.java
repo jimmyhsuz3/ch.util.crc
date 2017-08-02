@@ -51,32 +51,32 @@ public class CRCTest2 {
 		put("C:/Users/jimmy.shu/git/ch-memo/b/XRayType.java",
 				"D:/sts/workspace/samples/java_first_spring_support/src/main/java/demo/spring/service/XRayType.java");
 
-		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/note0720(0720.0620).xlsx",
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/note0720(0720.0620).xlsx", //:reserve-7
 				"C:/Users/jimmy.shu/git/ch-memo/a/note0720.xlsx");
-		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/RedisTest(0725.0614).java",
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/RedisTest(0725.0614).java", //:reserve-8
 				"C:/Users/jimmy.shu/git/ch-memo/b/RedisTest(0725.0614).java",
 				"C:/Users/jimmy.shu/git/ch-test-redis/src/main/java/ch/test/redis/RedisTest.java");
 		put("C:/Users/jimmy.shu/git/ch-memo/b/Runner(0725.1806).java");
 
-		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0706.0611).txt",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0714.0217)",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ_(0719.1054)");
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0706.0611).txt", //:reserve-r1
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0714.0217)", //:reserve-r2
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ_(0719.1054)"); //:reserve-r3
 		put("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
 				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
 				"C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_");
 
 		putText("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0714.0217)");
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0714.0217)"); //:reserve-2
 		putText("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ(0706.0611).txt",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0706.0611).txt");
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0706.0611).txt"); //:reserve-1
 		putText("C:/Users/jimmy.shu/git/ch-memo/a/a1_RabbitMQ_",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ_(0719.1054)");
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ_(0719.1054)"); //:reserve-3
 		put("C:/Users/jimmy.shu/git/ch-memo/a/a2_804.txt",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a2_804.txt");
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a2_804(0724.0557).txt"); //:reserve-4
 		putText("C:/Users/jimmy.shu/git/ch-memo/a/a3_git_tree.txt",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a3_git_tree(0714.0328).txt");
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a3_git_tree(0714.0328).txt"); //:reserve-5
 		put("C:/Users/jimmy.shu/git/ch-memo/a/a4_git_porcelain.txt",
-				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a4_git_porcelain(0719.1127).txt");
+				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a4_git_porcelain(0719.1127).txt"); //:reserve-6
 
 		put("C:/Users/jimmy.shu/Desktop/保存/TestSearchEngineService(0713).java",
 				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/handler/search/TestSearchEngineService.java");

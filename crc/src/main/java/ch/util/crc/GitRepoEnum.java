@@ -2,6 +2,7 @@ package ch.util.crc;
 public enum GitRepoEnum {
 	ch_test_browsinghis("https://github.com/jimmyhsuz3/ch-test-browsinghis.git", "jimmyhsianghsu", "jimmy.hsu@promeritage.com.tw"
 			, new String[]{"1c31968c6ff63baf1f128354a73c1e2548c13b7d", "2017-07-31 10:59:07"}
+			, new String[]{"0f158a4d396e8b452963e0f692106f522ec9ea59", "2017-08-02 15:15:49"}
 			),
 	ch_util_crc("https://github.com/jimmyhsuz3/ch.util.crc.git", "jimmyshu", "jimmy.shu@104.com.tw"
 			, new String[]{"e6a488767513a22daee7c0b12ccb1cf384bce53b", "2017-08-01 16:35:37"}
@@ -9,12 +10,14 @@ public enum GitRepoEnum {
 			, new String[]{"285f6be12d30a998996a27152e58588a28b3ff91", "2017-8-2 13:54:33"}
 			, new String[]{"dba10bdd055575df209e822686aa56755b4e0078", "2017-08-02 14:07:24"}
 			, new String[]{"c8c75db11a6bde67aeece426b16f921ddb5408a5", "2017-08-02 14:51:50"}
+			, new String[]{"5bc3a4ecc3a6c363fd324db1fd0e0e9aae00ecca", "2017-08-02 14:57:29"}
 			),
 	ch_test_http("https://github.com/jimmyhsuz3/ch-test-http.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"216a62a68373e8bf75e3bde7613b8870372d66a8", "2017-08-01 14:34:35"}
 			),
 	ch_test_redis("https://github.com/jimmyhsuz3/ch-memo.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"da98579fe56e6315a085d039177fc63e60492c5e", "2017-07-31 09:52:25"}
+			, new String[]{"2e6ff7c8f5b1f97ea80d2ebfbb14644d1f84f808", "2017-08-02 15:03:24"}
 			),
 	ch_memo("https://github.com/jimmyhsuz3/ch-test-redis.git", "jimmyhsianghsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"024069b116a4bac7946d140b3314599b37510082", "2017-07-31 10:31:04"}

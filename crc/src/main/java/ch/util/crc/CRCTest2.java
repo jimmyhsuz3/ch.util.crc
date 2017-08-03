@@ -35,6 +35,7 @@ public class CRCTest2 {
 	private CRCTest2(){
 		System.out.println(java.util.Arrays.asList(7, 2, 2, 1, 6));
 		System.out.println(java.util.Arrays.asList(7, 3, 2, 6, 2));
+		System.out.println(java.util.Arrays.asList(7, 3, 2, 6, 5));
 
 		put("C:/Users/jimmy.shu/git/ch-memo/b/sample-pom.xml",
 				"D:/sts/workspace/samples/pom.xml");
@@ -56,7 +57,8 @@ public class CRCTest2 {
 		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/RedisTest(0725.0614).java", //:reserve-8
 				"C:/Users/jimmy.shu/git/ch-memo/b/RedisTest(0725.0614).java",
 				"C:/Users/jimmy.shu/git/ch-test-redis/src/main/java/ch/test/redis/RedisTest.java");
-		put("C:/Users/jimmy.shu/git/ch-memo/b/Runner(0725.1806).java");
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(6)/Runner(0725.1806).java", //:xls(6)
+				"C:/Users/jimmy.shu/git/ch-memo/b/Runner(0725.1806).java");
 
 		put("C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0706.0611).txt", //:reserve-r1
 				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a1_RabbitMQ(0714.0217)", //:reserve-r2
@@ -78,10 +80,16 @@ public class CRCTest2 {
 		put("C:/Users/jimmy.shu/git/ch-memo/a/a4_git_porcelain.txt",
 				"C:/Users/jimmy.shu/Desktop/保存/xls(2)/a4_git_porcelain(0719.1127).txt"); //:reserve-6
 
-		put("C:/Users/jimmy.shu/Desktop/保存/TestSearchEngineService(0713).java",
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(6)/TestSearchEngineService(0713).java", //:xls(6)
 				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/handler/search/TestSearchEngineService.java");
-		putText("C:/Users/jimmy.shu/Desktop/保存/TestProfileSearchService(0713).java",
+		putText("C:/Users/jimmy.shu/Desktop/保存/xls(6)/TestProfileSearchService(0713).java", //:xls(6)
 				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/TestProfileSearchService.java");
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(6)/NewTest1.java", //:xls(6)
+				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/NewTest1.java");
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(6)/NewTest2.java", //:xls(6)
+				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/NewTest2.java");
+		put("C:/Users/jimmy.shu/Desktop/保存/xls(6)/NewTest3.java", //:xls(6)
+				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/NewTest3.java");
 
 		add("C:/Users/jimmy.shu/git/test-parent/parent/.gitignore");
 		add("C:/Users/jimmy.shu/git/crc/crc/.gitignore",

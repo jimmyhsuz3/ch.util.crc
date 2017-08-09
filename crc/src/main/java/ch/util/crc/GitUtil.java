@@ -1,6 +1,10 @@
 package ch.util.crc;
 import java.io.File;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jgit.api.Git;
@@ -12,6 +16,8 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.errors.CorruptObjectException;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
+import org.eclipse.jgit.errors.AmbiguousObjectException;
+import org.eclipse.jgit.errors.RevisionSyntaxException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
@@ -160,5 +166,62 @@ public class GitUtil {
 				df.close();
 		}
 		return builder.toString();
+	}
+	private Date getCommitTime(int commitTime){return new Date(commitTime * 1000l);}
+	public List<String> commitsFromDate(Repository repo, Date from, Date to){
+		List<String> list = new java.util.ArrayList<String>();
+		try {
+			RevCommit commit = repo.parseCommit(repo.resolve("FETCH_HEAD"));
+			while (commit.getParentCount() > 0){
+				Date commitTime = getCommitTime(commit.getCommitTime());
+				if ((from == null || commitTime.after(from)) && (to == null || commitTime.before(to)))
+					list.add(commit.toObjectId().name());
+				commit = repo.parseCommit(commit.getParent(0).toObjectId());
+			}
+		} catch (RevisionSyntaxException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (AmbiguousObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return list;
+	}
+	public Map<String, String> commitDiffs(Repository repo, String objectId){
+		Map<String, String> map = new java.util.HashMap<String, String>();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DiffFormatter df = null;
+		try {
+			RevCommit commit = repo.parseCommit(ObjectId.fromString(objectId));
+			df = new DiffFormatter(baos);
+			df.setRepository(repo);
+			for(DiffEntry entry : df.scan(commit.getParentCount() > 0 ? repo.parseCommit(commit.getParent(0)).getTree() : null, commit.getTree())){
+				df.format(entry);
+				baos.flush(); // no-op?
+				map.put(entry.toString(), new String(baos.toByteArray()));
+				System.out.println(new String(baos.toByteArray()));
+				baos.reset();
+			}
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (df != null)
+				df.close();
+			if (baos != null)
+				try {
+					baos.close(); // no-op?
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+		}
+		return map;
 	}
 }

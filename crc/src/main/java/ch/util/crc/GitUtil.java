@@ -98,6 +98,17 @@ public class GitUtil {
 		return null;
 	}
 	private boolean checkRepo(GitRepo gitRepo, Repository repo){
+		for (String[] head : gitRepo.getHeads()){
+			try {
+				if (!new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).parse(head[1]).equals(
+						getCommitTime(repo.parseCommit(repo.resolve(head[0])).getCommitTime())))
+					throw new RuntimeException("fail: checkRepo: " + gitRepo.getUrl());
+			} catch (java.text.ParseException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		try {
 			Ref head = repo.exactRef("HEAD");
 			if (head.getObjectId().equals(repo.resolve("FETCH_HEAD")))

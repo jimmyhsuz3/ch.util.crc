@@ -30,4 +30,5 @@ public class GitRepo {
 			throw new RuntimeException(e);
 		}
 	}
+	public String[][] getHeads() {return heads;}
 }

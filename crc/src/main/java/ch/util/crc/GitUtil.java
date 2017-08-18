@@ -26,6 +26,10 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 public class GitUtil {
+	public static final String COMMIT_ID = "commitId";
+	public static final String OBJECT_ID = "objectId";
+	public static final String COMMIT_TIME = "commitTime";
+	public static final String FULL_MESSAGE = "fullMessage";
 	public Repository getRepo(GitRepo gitRepo, String filePath){
 		Matcher matcher = Pattern.compile("/([\\w-\\.]+).git").matcher(gitRepo.getUrl());
 		if (matcher.find()){
@@ -214,9 +218,11 @@ public class GitUtil {
 				df.format(entry);
 				baos.flush(); // no-op?
 				map.put(entry.toString(), new String(baos.toByteArray()));
-				System.out.println(new String(baos.toByteArray()));
+				System.out.println(new String(baos.toByteArray())); //
 				baos.reset();
 			}
+			map.put("_1:commitTime", new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime())));
+			map.put("_2:fullMessage", commit.getFullMessage());
 		} catch (IncorrectObjectTypeException e) {
 			throw new RuntimeException(e);
 		} catch (MissingObjectException e) {
@@ -234,5 +240,132 @@ public class GitUtil {
 				}
 		}
 		return map;
+	}
+	private String treeFile(Repository repo, String objectId, String pathString){
+		TreeWalk walk = null;
+		try {
+			walk = new TreeWalk(repo);
+			walk.addTree(repo.parseCommit(ObjectId.fromString(objectId)).getTree());
+			walk.setRecursive(false);
+			while (walk.next())
+				if (walk.isSubtree())
+					walk.enterSubtree();
+				else if(pathString.equals(walk.getPathString()))
+					return walk.getObjectId(0).name();
+			return null;
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (CorruptObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (walk != null)
+				walk.close();
+		}
+	}
+	// String pathString, String url *4(his2.file.diff) + list
+	// Repository repo, String pathString *3(his.file.diff)
+	public List<Map<String, String>> getGitFileHis(Repository repo, String pathString){ // getGit
+		List<Map<String, String>> list = new java.util.ArrayList<Map<String, String>>();
+		try {
+			RevCommit commit = repo.parseCommit(repo.resolve("FETCH_HEAD"));
+			String commitId = commit.name();
+			String objectId = null;
+			String commitTime = null;
+			String fullMessage = null;
+			while (true) {
+				String id = treeFile(repo, commit.name(), pathString);
+				if (objectId == null){
+					objectId = id;
+				} else if (id == null || !id.equals(objectId)){
+					Map<String, String> map = new java.util.HashMap<String, String>();
+					map.put(COMMIT_ID, commitId);
+					map.put(OBJECT_ID, objectId);
+					map.put(COMMIT_TIME, commitTime);
+					map.put(FULL_MESSAGE, fullMessage);
+					list.add(map);
+				}
+				if (commit.getParentCount() == 0)
+					break;
+				commitId = commit.name();
+				objectId = id;
+				commitTime = new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime()));
+				fullMessage = commit.getFullMessage();
+				commit = repo.parseCommit(commit.getParent(0).toObjectId());
+			}
+		} catch (RevisionSyntaxException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (AmbiguousObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return list;
+	}
+	public java.io.InputStream getGitFile(Repository repo, String pathString, String commitId, String objectId){ // getGit
+		TreeWalk walk = null;
+		try {
+			walk = new TreeWalk(repo);
+			walk.addTree(repo.parseCommit(ObjectId.fromString(commitId)).getTree());
+			walk.setRecursive(false);
+			while (walk.next())
+				if (walk.isSubtree())
+					walk.enterSubtree();
+				else if (pathString.equals(walk.getPathString()))
+					if (objectId.equals(walk.getObjectId(0).name()))
+						return new ShaUtil().hashObject(walk.getObjectReader().open(walk.getObjectId(0)).openStream(), objectId);
+					else
+						throw new RuntimeException("getFile");
+			throw new RuntimeException("getFile");
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (CorruptObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (walk != null)
+				walk.close();
+		}
+	}
+	public String getGitFileDiff(Repository repo, String pathString, String commitId1, String commitId2){ // getGit
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DiffFormatter df = null;
+		try {
+			df = new DiffFormatter(baos);
+			df.setRepository(repo);
+			for(DiffEntry entry : df.scan(repo.parseCommit(ObjectId.fromString(commitId1)), repo.parseCommit(ObjectId.fromString(commitId2)))){
+				if (pathString.equals(entry.getNewPath()) && entry.getNewPath().equals(entry.getOldPath())){
+					df.format(entry);
+					baos.flush(); // no-op?
+					return new String(baos.toByteArray());
+				}
+			}
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (df != null)
+				df.close();
+			if (baos != null)
+				try {
+					baos.close(); // no-op?
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+		}
+		throw new RuntimeException("getGitFileDiff");
 	}
 }

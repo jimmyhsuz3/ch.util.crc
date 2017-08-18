@@ -108,8 +108,12 @@ public class GitTest {
 			throw new RuntimeException(e);
 		}
 	}
-	public List<Map<String, String>> getGitFileHis(String pathString, String url){
-		return gitUtil.getGitFileHis(getRepoFromMap(url), pathString);
+	public String getGitFileHis(String pathString, String url){
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(gitUtil.getGitFileHis(getRepoFromMap(url), pathString));
+		} catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	private List<Map<String, String>> getGitFileHis(String pathString, String url, String[][] ids){
 		List<Map<String, String>> list = gitUtil.getGitFileHis(getRepoFromMap(url), pathString);
@@ -129,6 +133,8 @@ public class GitTest {
 		}
 		if (builder.length() > 0)
 			throw new RuntimeException(builder.toString());
+		if (idList.size() > 0)
+			throw new RuntimeException("getGitFileHis");
 		return list;
 	}
 	public void getGitFile(String pathString, String url, String commitId, String objectId, java.io.OutputStream os){
@@ -164,6 +170,8 @@ public class GitTest {
 		System.out.println(test.testByDate("2017-7-30 0:0:0", null));
 		System.out.println(test.getGitFileList());
 		test.testStream();
+		System.out.println(test.getGitFileHis("parent/simpleweb/src/main/java/simpleweb/TestServlet.java",
+				"https://github.com/jimmyhsuz3/ch.test.parent.git"));
 		test.close();
 	}
 	private void testStream(){

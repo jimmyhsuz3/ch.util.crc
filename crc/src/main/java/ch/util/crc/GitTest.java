@@ -46,7 +46,7 @@ public class GitTest {
 			getRepoFromMap(gitRepo.getUrl());
 		return GIT_REPOS.length;
 	}
-	public void close(){for(Repository repo : repoMap.values())repo.close();}
+	public void close(){for(Repository repo : repoMap.values())repo.close();repoMap.clear();}
 	public String testByDate(String strFrom, String strTo){
 		Date from = null;
 		Date to = null;

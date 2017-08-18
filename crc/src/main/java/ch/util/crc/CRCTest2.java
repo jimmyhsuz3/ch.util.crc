@@ -95,7 +95,8 @@ public class CRCTest2 {
 		add("C:/Users/jimmy.shu/git/crc/crc/.gitignore",
 				"C:/Users/jimmy.shu/git/test-mongodb/mongodb/.gitignore",
 				"C:/Users/jimmy.shu/git/ch-test-http/http/.gitignore",
-				"C:/Users/jimmy.shu/git/ch-test-redis/.gitignore");
+				"C:/Users/jimmy.shu/git/ch-test-redis/.gitignore",
+				"C:/Users/jimmy.shu/git/ch-test-easyweb/.gitignore");
 		add("C:/Users/jimmy.shu/git/test-parent/parent/axis2/.gitignore",
 				"C:/Users/jimmy.shu/git/test-parent/parent/cxf/.gitignore",
 				"C:/Users/jimmy.shu/git/test-parent/parent/simpleweb/.gitignore");

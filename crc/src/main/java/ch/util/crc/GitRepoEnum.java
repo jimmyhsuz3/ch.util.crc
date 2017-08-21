@@ -20,9 +20,14 @@ public enum GitRepoEnum {
 			, new String[]{"6bc20484661f52980e9bc80f44a2b55dc280b8ba", "2017-8-18 16:29:09"}
 			, new String[]{"2b949b91c5f7ab7c8f0519faaf94c72915f70ada", "2017-8-18 16:57:09"}
 			, new String[]{"1319a6bc04baa0d4d1462a6ec94ecb43d74eacdf", "2017-8-18 17:40:54"}
+			, new String[]{"f7e9cc6d7e23a198e1b6703e31613d7beadcf819", "2017-8-18 17:47:28"}
+			, new String[]{"68d4d0ef4bcb2a91485e7394e63c6d9e3ab0d0df", "2017-08-21 15:09:50"}
+			, new String[]{"26137ad7a3684560eb88473429887a40a2854a8c", "2017-08-21 16:14:44"}
 			),
 	ch_test_http("https://github.com/jimmyhsuz3/ch-test-http.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"216a62a68373e8bf75e3bde7613b8870372d66a8", "2017-08-01 14:34:35"}
+			, new String[]{"30825ca7384f48468a3b987586d514d9480e6e54", "2017-08-21 13:22:27"}
+			, new String[]{"f8db72612b2d6f7b465e22a813d10e23a9a40fb5", "2017-08-21 14:22:21"}
 			),
 	ch_memo("https://github.com/jimmyhsuz3/ch-memo.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"da98579fe56e6315a085d039177fc63e60492c5e", "2017-07-31 09:52:25"}

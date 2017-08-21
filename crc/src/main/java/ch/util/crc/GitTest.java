@@ -82,6 +82,15 @@ public class GitTest {
 		}
 	}
 	public String getGitFileList(){
+		try {
+			return doGetGitFileList();
+		} catch (RuntimeException re){
+			final Map<String, Object> map = new java.util.HashMap<String, Object>();
+			map.put("builder", readTree(re.getLocalizedMessage()));
+			return writeValueAsString(map);
+		}
+	}
+	private String doGetGitFileList(){
 		com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
 		ObjectNode node = mapper.createObjectNode();
 		for (String[][] props : PropGitFile.props){
@@ -129,10 +138,13 @@ public class GitTest {
 					break;
 				}
 			if (id == null)
-				builder.append('\n').append(String.format("{\"%s\" ,\"%s\"},", commitId, objectId));
+				// javaForm
+				builder.append('\n').append(String.format("[\"%s\" ,\"%s\"],", commitId, objectId));
 		}
-		if (builder.length() > 0)
-			throw new RuntimeException(builder.toString());
+		if (builder.length() > 0){
+			builder.setLength(builder.length() - 1);
+			throw new RuntimeException(builder.insert(0, '[').append(']').toString());
+		}
 		if (idList.size() > 0)
 			throw new RuntimeException("getGitFileHis");
 		return list;
@@ -186,5 +198,62 @@ public class GitTest {
 		}
 		System.out.println(new String(baos.toByteArray()));
 		baos.reset();
+	}
+	private Object readTree(String obj){
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper().readTree(obj);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	private String writeValueAsString(Object obj){
+		try {
+			return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj);
+		} catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	public String getAllUrl(){
+		String[] urls = new String[GIT_REPOS.length];
+		for (int i = 0; i < urls.length; i++)
+			urls[i] = GIT_REPOS[i].getUrl();
+		return writeValueAsString(urls);
+	}
+	public String fetchLastCommit(String url){
+		String[] head = gitUtil.fetchLastCommit(url, TEMP_GIT, false);
+		String[] fetchHead = gitUtil.fetchLastCommit(url, TEMP_GIT, true);
+		// javaForm
+		if (head[0].equals(fetchHead[0]) && head[1].equals(fetchHead[1]))
+			return writeValueAsString(new String[][]{head});
+		else
+			return writeValueAsString(new String[][]{head, fetchHead});
+	}
+	public String fetchAllLastCommit(){
+		java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(GIT_REPOS.length);
+		final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(GIT_REPOS.length);
+		final Map<String, Object> map = new java.util.HashMap<String, Object>();
+		final Thread thread = Thread.currentThread();
+		for (int i = 0; i < GIT_REPOS.length; i++){
+			final int n = i;
+			executor.execute(new Runnable(){
+				@Override
+				public void run() {
+					try {
+						map.put(GIT_REPOS[n].getUrl(), readTree(fetchLastCommit(GIT_REPOS[n].getUrl())));
+					} catch (Exception e) {
+						thread.interrupt();
+					}
+					latch.countDown();
+				}
+			});
+		}
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} finally {
+			executor.shutdown();
+		}
+		return writeValueAsString(map);
 	}
 }

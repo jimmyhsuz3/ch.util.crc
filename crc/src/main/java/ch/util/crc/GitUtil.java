@@ -115,6 +115,7 @@ public class GitUtil {
 		}
 		try {
 			Ref head = repo.exactRef("HEAD");
+			// head=fetch_head=gitRepo.head
 			if (head.getObjectId().equals(repo.resolve("FETCH_HEAD")))
 				if (gitRepo.getHead().equals(head.getObjectId().name())) {
 					RevCommit commit = repo.parseCommit(head.getObjectId());
@@ -367,5 +368,42 @@ public class GitUtil {
 				}
 		}
 		throw new RuntimeException("getGitFileDiff");
+	}
+	public String[] fetchLastCommit(String url, String filePath, boolean fetch){
+		Repository repo = null;
+		Matcher matcher = Pattern.compile("/([\\w-\\.]+).git").matcher(url);
+		if (matcher.find()){
+			File file = new File(new File(filePath), matcher.group(1));
+			if (file.exists())
+				try {
+					repo = new FileRepositoryBuilder().setGitDir(file).readEnvironment().findGitDir().build();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+		}
+		if (repo != null){
+			Git git = null;
+			try {
+				git = new Git(repo);
+				if(fetch)
+					System.out.println(git.fetch().call().getMessages());
+				RevCommit commit = repo.parseCommit(repo.resolve("FETCH_HEAD"));
+				return new String[]{commit.name(), new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime()))};
+			} catch (InvalidRemoteException e) {
+				throw new RuntimeException(e);
+			} catch (TransportException e) {
+				throw new RuntimeException(e);
+			} catch (GitAPIException e) {
+				throw new RuntimeException(e);
+			} catch (IncorrectObjectTypeException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			} finally {
+				if (git != null)
+					git.close();
+			}
+		}
+		throw new RuntimeException("fetchLastCommit");
 	}
 }

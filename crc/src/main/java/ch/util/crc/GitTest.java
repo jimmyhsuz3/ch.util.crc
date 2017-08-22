@@ -81,6 +81,7 @@ public class GitTest {
 			throw new RuntimeException(e);
 		}
 	}
+	// getGitFileList->doGetGitFileList->getGitFileHis(ids)->gitUtil.getGitFileHis->list/builder
 	public String getGitFileList(){
 		try {
 			return doGetGitFileList();
@@ -138,7 +139,7 @@ public class GitTest {
 					break;
 				}
 			if (id == null)
-				// javaForm
+				// javaForm(commitId, objectId)
 				builder.append('\n').append(String.format("[\"%s\" ,\"%s\"],", commitId, objectId));
 		}
 		if (builder.length() > 0){
@@ -146,7 +147,7 @@ public class GitTest {
 			throw new RuntimeException(builder.insert(0, '[').append(']').toString());
 		}
 		if (idList.size() > 0)
-			throw new RuntimeException("getGitFileHis");
+			throw new RuntimeException("[[\"getGitFileHis\", \"idList.size() > 0\"]]");
 		return list;
 	}
 	public void getGitFile(String pathString, String url, String commitId, String objectId, java.io.OutputStream os){
@@ -222,7 +223,7 @@ public class GitTest {
 	public String fetchLastCommit(String url){
 		String[] head = gitUtil.fetchLastCommit(url, TEMP_GIT, false);
 		String[] fetchHead = gitUtil.fetchLastCommit(url, TEMP_GIT, true);
-		// javaForm
+		// javaForm(commitId, commitTime)
 		if (head[0].equals(fetchHead[0]) && head[1].equals(fetchHead[1]))
 			return writeValueAsString(new String[][]{head});
 		else

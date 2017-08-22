@@ -97,6 +97,10 @@ public class GitUtil {
 				throw new RuntimeException(e);
 			} catch (GitAPIException e) {
 				throw new RuntimeException(e);
+			} catch (RuntimeException re){
+				if (repo != null)
+					repo.close();
+				throw re;
 			}
 		}
 		return null;
@@ -402,6 +406,8 @@ public class GitUtil {
 			} finally {
 				if (git != null)
 					git.close();
+				if (repo != null)
+					repo.close();
 			}
 		}
 		throw new RuntimeException("fetchLastCommit");

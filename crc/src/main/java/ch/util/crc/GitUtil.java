@@ -375,6 +375,7 @@ public class GitUtil {
 	}
 	public String[] fetchLastCommit(String url, String filePath, boolean fetch){
 		Repository repo = null;
+		boolean clone = false;
 		Matcher matcher = Pattern.compile("/([\\w-\\.]+).git").matcher(url);
 		if (matcher.find()){
 			File file = new File(new File(filePath), matcher.group(1));
@@ -387,8 +388,11 @@ public class GitUtil {
 			else {
 				// FileRepositoryBuilder().setGitDir, Git.cloneRepository().setURI
 				file.mkdirs();
+			}
+			if (repo == null || !repo.getObjectDatabase().exists()){
 				try {
 					repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true).call().getRepository();
+					clone = true;
 				} catch (InvalidRemoteException e) {
 					throw new RuntimeException(e);
 				} catch (TransportException e) {
@@ -403,9 +407,11 @@ public class GitUtil {
 		if (repo != null){
 			Git git = null;
 			try {
-				git = new Git(repo);
-				if(fetch)
-					System.out.println(git.fetch().call().getMessages());
+				if (!clone){
+					git = new Git(repo);
+					if(fetch)
+						System.out.println(git.fetch().call().getMessages());
+				}
 				RevCommit commit = repo.parseCommit(repo.resolve("FETCH_HEAD"));
 				return new String[]{commit.name(), new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime()))};
 			} catch (InvalidRemoteException e) {
@@ -423,8 +429,53 @@ public class GitUtil {
 					git.close();
 				if (repo != null)
 					repo.close();
+				System.out.println("fetchLastCommit" + ".close = " + url);
 			}
 		}
 		throw new RuntimeException("fetchLastCommit");
+	}
+	public Repository fetchRepo(String url, String filePath){
+		Repository repo = null;
+		Matcher matcher = Pattern.compile("/([\\w-\\.]+).git").matcher(url);
+		if (matcher.find()){
+			File file = new File(new File(filePath), matcher.group(1));
+			if (file.exists())
+				try {
+					repo = new FileRepositoryBuilder().setGitDir(file).readEnvironment().findGitDir().build();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			else
+				file.mkdirs();
+			if (repo == null || !repo.getObjectDatabase().exists())
+				try {
+					repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true).call().getRepository();
+				} catch (InvalidRemoteException e) {
+					throw new RuntimeException(e);
+				} catch (TransportException e) {
+					throw new RuntimeException(e);
+				} catch (IllegalStateException e) {
+					throw new RuntimeException(e);
+				} catch (GitAPIException e) {
+					throw new RuntimeException(e);
+				}
+			else {
+				Git git = null;
+				try {
+					git = new Git(repo);
+					System.out.println(git.fetch().call().getMessages());
+				} catch (InvalidRemoteException e) {
+					throw new RuntimeException(e);
+				} catch (TransportException e) {
+					throw new RuntimeException(e);
+				} catch (GitAPIException e) {
+					throw new RuntimeException(e);
+				} finally {
+					if (git != null)
+						git.close();
+				}
+			}
+		}
+		return repo;
 	}
 }

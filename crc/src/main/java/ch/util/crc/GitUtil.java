@@ -449,7 +449,8 @@ public class GitUtil {
 				file.mkdirs();
 			if (repo == null || !repo.getObjectDatabase().exists())
 				try {
-					repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true).call().getRepository();
+					repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true)
+							.setTransportConfigCallback(JschUtil.config()).call().getRepository();
 				} catch (InvalidRemoteException e) {
 					throw new RuntimeException(e);
 				} catch (TransportException e) {
@@ -463,7 +464,7 @@ public class GitUtil {
 				Git git = null;
 				try {
 					git = new Git(repo);
-					System.out.println(git.fetch().call().getMessages());
+					System.out.println(git.fetch().setTransportConfigCallback(JschUtil.config()).call().getMessages());
 				} catch (InvalidRemoteException e) {
 					throw new RuntimeException(e);
 				} catch (TransportException e) {
@@ -477,5 +478,22 @@ public class GitUtil {
 			}
 		}
 		return repo;
+	}
+	private String[] repoRefCommit(Repository repo, String refName){
+		RevCommit commit;
+		try {
+			commit = repo.parseCommit(repo.resolve(refName));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return new String[]{commit.name(), new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime()))};
+	}
+	public Map<String, String[]> repoBranchCommit(Repository repo){
+		Map<String, String[]> map = new java.util.HashMap<String, String[]>();
+		for (java.util.Iterator<java.util.Map.Entry<String, Ref>> iter = repo.getAllRefs().entrySet().iterator(); iter.hasNext();){
+			java.util.Map.Entry<String, Ref> entry = iter.next();
+			map.put(entry.getValue().getName(), repoRefCommit(repo, entry.getValue().getName()));
+		}
+		return map;
 	}
 }

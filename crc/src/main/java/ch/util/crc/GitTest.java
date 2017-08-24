@@ -36,6 +36,21 @@ public class GitTest {
 	}
 	public int test(boolean clean){
 		if (clean)
+			close();
+		try {
+			return dotest(clean);
+		} catch (RuntimeException re){
+			close();
+			try {
+				org.apache.commons.io.FileUtils.cleanDirectory(new java.io.File(TEMP_GIT));
+			} catch (java.io.IOException e) {
+				throw new RuntimeException(e);
+			}
+			throw re;
+		}
+	}
+	private int dotest(boolean clean){
+		if (clean)
 			try {
 				org.apache.commons.io.FileUtils.cleanDirectory(new java.io.File(TEMP_GIT));
 			} catch (java.io.IOException e) {

@@ -384,6 +384,21 @@ public class GitUtil {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
+			else {
+				// FileRepositoryBuilder().setGitDir, Git.cloneRepository().setURI
+				file.mkdirs();
+				try {
+					repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true).call().getRepository();
+				} catch (InvalidRemoteException e) {
+					throw new RuntimeException(e);
+				} catch (TransportException e) {
+					throw new RuntimeException(e);
+				} catch (IllegalStateException e) {
+					throw new RuntimeException(e);
+				} catch (GitAPIException e) {
+					throw new RuntimeException(e);
+				}
+			}
 		}
 		if (repo != null){
 			Git git = null;

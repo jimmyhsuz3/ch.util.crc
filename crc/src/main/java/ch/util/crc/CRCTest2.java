@@ -90,6 +90,9 @@ public class CRCTest2 {
 				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/NewTest2.java");
 		put("C:/Users/jimmy.shu/Desktop/保存/xls(6)/NewTest3.java", //:xls(6)
 				"C:/Users/jimmy.shu/git/104plus-Profilengine/src/test/java/com/e104/profile/service/NewTest3.java");
+		put("C:/Users/jimmy.shu/Desktop/保存/2_config.prop(0825.0558)",
+				"D:\\vm/config.prop");
+		//#7+1.3, newTest
 
 		add("C:/Users/jimmy.shu/git/test-parent/parent/.gitignore");
 		add("C:/Users/jimmy.shu/git/crc/crc/.gitignore",

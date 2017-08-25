@@ -46,6 +46,7 @@ public class JschUtil {
 		final SshSessionFactory sshSessionFactory = new JschConfigSessionFactory() {
 			@Override
 			protected void configure(Host host, Session session) {
+				// session.setPassword( "password" );
 			}
 			@Override
 			protected JSch createDefaultJSch( FS fs ) throws JSchException {

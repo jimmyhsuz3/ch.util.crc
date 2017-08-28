@@ -139,6 +139,43 @@ public class GitUtil {
 		}
 		return false;
 	}
+	// Repository repo, String pathString, String commitId
+	public List<String> treeWalkFolder(Repository repo, String pathString, String commitId, boolean recursive){
+		List<String> list = new java.util.ArrayList<String>();
+		TreeWalk walk = null;
+		try {
+			walk = new TreeWalk(repo);
+			walk.addTree(repo.parseCommit(ObjectId.fromString(commitId)).getTree());
+			walk.setRecursive(false);
+			if (pathString == null || pathString.trim().isEmpty()){
+				while (walk.next())
+					if(walk.getDepth() == 0)
+						list.add(walk.getPathString());
+			} else
+				while (walk.next()){
+					if (walk.isSubtree())
+						walk.enterSubtree();
+					if (pathString.equals(walk.getPathString())){
+						int depth = walk.getDepth();
+						while (walk.next() && depth == walk.getDepth())
+							list.add(walk.getPathString());
+						break;
+					}
+				}
+		} catch (MissingObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectObjectTypeException e) {
+			throw new RuntimeException(e);
+		} catch (CorruptObjectException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (walk != null)
+				walk.close();
+		}
+		return list;
+	}
 	private String treeWalk(Repository repo, String objectId){
 		StringBuilder builder = new StringBuilder();
 		TreeWalk walk = null;
@@ -386,6 +423,9 @@ public class GitUtil {
 					throw new RuntimeException(e);
 				}
 			else {
+				// fetchLastCommit(fetchRepo-repoBranchCommit-repoRefCommit)
+				// 0824: GitUtil=setTransportConfigCallback,repoRefCommit, repoBranchCommit
+				// 0824: GitUtil = fetchLastCommit + boolean clone*5, fetchRepo
 				// FileRepositoryBuilder().setGitDir, Git.cloneRepository().setURI
 				file.mkdirs();
 			}

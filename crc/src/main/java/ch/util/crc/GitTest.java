@@ -34,6 +34,15 @@ public class GitTest {
 			}
 		throw new RuntimeException("fail: getRepo: " + url);
 	}
+	public int cleanClose(){
+		close();
+		try {
+			org.apache.commons.io.FileUtils.cleanDirectory(new java.io.File(TEMP_GIT));
+		} catch (java.io.IOException e) {
+			throw new RuntimeException(e);
+		}
+		return GIT_REPOS.length;
+	}
 	public int test(boolean clean){
 		if (clean)
 			close();
@@ -96,6 +105,8 @@ public class GitTest {
 			throw new RuntimeException(e);
 		}
 	}
+	// important-3*4:
+	// String pathString, String url *4(his2.file.diff) + list
 	// getGitFileList->doGetGitFileList->getGitFileHis(ids)->gitUtil.getGitFileHis->list/builder
 	public String getGitFileList(){
 		try {
@@ -133,15 +144,20 @@ public class GitTest {
 			throw new RuntimeException(e);
 		}
 	}
-	public String getGitFileHis(String pathString, String url){
+	public String getGitFileHis(String pathString, String url, String commitId){
 		try {
-			return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(gitUtil.getGitFileHis(getRepoFromMap(url), pathString));
+			return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(gitUtil.getGitFileHis(getRepoFromMap(url), pathString,
+					commitId));
 		} catch (com.fasterxml.jackson.core.JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	public String checkGitFileHis(String pathString, String url, String[][] ids){
+		return null;
+	}
+	// important-1*2:ids not less or more
 	private List<Map<String, String>> getGitFileHis(String pathString, String url, String[][] ids){
-		List<Map<String, String>> list = gitUtil.getGitFileHis(getRepoFromMap(url), pathString);
+		List<Map<String, String>> list = gitUtil.getGitFileHis(getRepoFromMap(url), pathString, null);
 		StringBuilder builder = new StringBuilder();
 		List<String[]> idList = new java.util.ArrayList<String[]>(java.util.Arrays.<String[]>asList(ids));
 		for (Map<String, String> map : list){
@@ -199,7 +215,10 @@ public class GitTest {
 		System.out.println(test.getGitFileList());
 		test.testStream();
 		System.out.println(test.getGitFileHis("parent/simpleweb/src/main/java/simpleweb/TestServlet.java",
-				"https://github.com/jimmyhsuz3/ch.test.parent.git"));
+				"https://github.com/jimmyhsuz3/ch.test.parent.git", ""));
+		System.out.println(test.fetchRepoBranchCommit("git@github.com:104corp/104plus-api-proxy.git"));
+		System.out.println(test.treeWalkFolder("https://github.com/jimmyhsuz3/ch.test.parent.git",
+				"parent/simpleweb/src/main/webapp", "17ecdfd0f0deedf6d0e484645b8f72ec6da78766"));
 		test.close();
 	}
 	private void testStream(){
@@ -271,5 +290,17 @@ public class GitTest {
 			executor.shutdown();
 		}
 		return writeValueAsString(map);
+	}
+	public String fetchRepoBranchCommit(String url){
+		Repository repo = gitUtil.fetchRepo(url, TEMP_GIT);
+		repoMap.put(url, repo);
+		return writeValueAsString(gitUtil.repoBranchCommit(repo));
+	}
+	// important-3*4:
+	// Repository repo, String pathString, String commitId *4
+	public String treeWalkFolder(String url, String pathString, String commitId){
+		if (pathString != null && pathString.endsWith("/"))
+			pathString = pathString.substring(0,  pathString.length() - 1);
+		return writeValueAsString(gitUtil.treeWalkFolder(getRepoFromMap(url), pathString, commitId, false));
 	}
 }

@@ -232,6 +232,12 @@ public class GitUtil {
 		try {
 			RevCommit commit = repo.parseCommit(repo.resolve("FETCH_HEAD"));
 			// important-2*4-1:commit.getParentCount()
+/*
+easyweb=8-15-6
+DiffEntry[ADD
+HsitoryManager=5
+/dev/null
+*/
 			while (commit.getParentCount() >= 0){
 				Date commitTime = getCommitTime(commit.getCommitTime());
 				if ((from == null || commitTime.after(from)) && (to == null || commitTime.before(to)))

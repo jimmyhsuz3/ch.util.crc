@@ -237,6 +237,7 @@ easyweb=8-15-6
 DiffEntry[ADD
 HsitoryManager=5
 /dev/null
+ProfileSearchEngineTest=11
 */
 			while (commit.getParentCount() >= 0){
 				Date commitTime = getCommitTime(commit.getCommitTime());

@@ -27,6 +27,15 @@ public enum GitRepoEnum {
 			, new String[]{"4e0d5f62577bc999e14feaced263c735a82f27a7", "2017-08-21 17:30:01"}
 			, new String[]{"9a6e9b2b7fcb624740672e0e7eb690e138f43b76", "2017-08-22 17:48:32"}
 			, new String[]{"743a296157ce276a3556856af9250a9126b477b2", "2017-08-22 17:58:41"}
+			, new String[]{"ca6d6af00a25beedf0bdc241aa3cfb1fa9f5f3e3", "2017-08-22 18:03:23"}
+			, new String[]{"58a8ade19875b0131b27dde257257c89b8d00329", "2017-08-24 11:44:27"}
+			, new String[]{"63b37538999404f8810dff3caa16d4627341e580", "2017-08-24 15:14:38"}
+			, new String[]{"9f0936412af1c13de00ed8c8aa618db7d8972fd1", "2017-08-24 16:06:14"}
+			, new String[]{"1ae95542bedcbfa1bfd584f6b8ce025e8e27ed47", "2017-08-25 09:42:50"}
+			, new String[]{"701416275a467378d8bcc2a55f01fdc7bb26353e", "2017-08-25 18:00:38"}
+			, new String[]{"e5b4a7513c435d685f1eee709e617f3186076fa0", "2017-08-28 11:48:22"}
+			, new String[]{"ee4c51385e4cc898a773438a22cc953912be9fa3", "2017-08-29 18:00:20"}
+			, new String[]{"3a62847425db7afc26057c8072958e16e5bfd71d", "2017-08-30 11:18:58"}
 			),
 	ch_test_http("https://github.com/jimmyhsuz3/ch-test-http.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"216a62a68373e8bf75e3bde7613b8870372d66a8", "2017-08-01 14:34:35"}
@@ -48,6 +57,8 @@ public enum GitRepoEnum {
 			, new String[]{"a62f91003d382d1715d77de21ceaca0f288f97df", "2017-7-21 18:08:21"}
 			, new String[]{"33a49973fec38ec46b9db2601c0bcb707eef6630", "2017-08-09 12:43:54"}
 			, new String[]{"aabd694773d20a7d2262633959101b9b41e44b86", "2017-08-17 11:41:43"}
+			, new String[]{"e8c0f58340831713c8baf16ddf120400fc322bda", "2017-08-23 18:01:31"}
+			, new String[]{"17ecdfd0f0deedf6d0e484645b8f72ec6da78766", "2017-08-24 11:20:55"}
 			),
 	ch_test_mongodb("https://github.com/jimmyhsuz3/ch-test-mongodb.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"99dcfd6158fd725bdcf413712c0ec5dd1abb9c46", "2017-7-13 17:48:34"}
@@ -63,6 +74,8 @@ public enum GitRepoEnum {
 			, new String[]{"e2b1d4e912588fdf03a97ad441b6599a7514ddc8", "2017-08-21 17:27:02"}
 			, new String[]{"d8c422e77c0ce5766d97bd66f9809ae66ddb5e0a", "2017-08-22 14:19:57"}
 			, new String[]{"c83feb2738baf21034d19c5042a75cb18fc506c1", "2017-08-22 17:44:10"}
+			, new String[]{"cae29123ebafdc443f6a30245fd27e7b4b73db70", "2017-08-30 15:46:04"}
+			, new String[]{"da35ac7a4421eaebde385f7ff0b0a4041f6268de", "2017-08-31 17:56:19"}
 			),
 	;
 	private GitRepo gitRepo;

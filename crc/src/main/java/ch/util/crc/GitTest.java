@@ -99,6 +99,23 @@ public class GitTest {
 			}
 			node.set(gitRepo.getUrl(), gNode);
 		}
+		for (String url : repoMap.keySet()){
+			boolean exist = false;
+			for (java.util.Iterator<java.util.Map.Entry<String, com.fasterxml.jackson.databind.JsonNode>> iter = node.fields(); iter.hasNext();)
+				if (url.equals(iter.next().getKey()))
+					exist = true;
+			if (!exist){
+				ObjectNode gNode = mapper.createObjectNode();
+				for (String objectId : gitUtil.commitsFromDate(getRepoFromMap(url), from, to)){
+					java.util.Map<String, String> map = gitUtil.commitDiffs(getRepoFromMap(url), objectId);
+					ArrayNode cNode = mapper.createArrayNode();
+					for (String key : map.keySet())
+						cNode.add(mapper.createObjectNode().put(key, map.get(key)));
+					gNode.set(objectId, cNode);
+				}
+				node.set(url, gNode);
+			}
+		}
 		try {
 			return mapper.writeValueAsString(node);
 		} catch (IOException e) {

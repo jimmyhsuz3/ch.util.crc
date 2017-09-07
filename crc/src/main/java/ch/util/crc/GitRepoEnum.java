@@ -36,6 +36,7 @@ public enum GitRepoEnum {
 			, new String[]{"e5b4a7513c435d685f1eee709e617f3186076fa0", "2017-08-28 11:48:22"}
 			, new String[]{"ee4c51385e4cc898a773438a22cc953912be9fa3", "2017-08-29 18:00:20"}
 			, new String[]{"3a62847425db7afc26057c8072958e16e5bfd71d", "2017-08-30 11:18:58"}
+			, new String[]{"17f969d61102b4c2aa33cdae828886d528482d93", "2017-08-31 18:15:28"}
 			),
 	ch_test_http("https://github.com/jimmyhsuz3/ch-test-http.git", "jimmy.hsu", "jimmy.hsu@104.com.tw"
 			, new String[]{"216a62a68373e8bf75e3bde7613b8870372d66a8", "2017-08-01 14:34:35"}

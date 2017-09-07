@@ -59,6 +59,7 @@ public class GitTest {
 		}
 	}
 	private int dotest(boolean clean){
+		close();
 		if (clean)
 			try {
 				org.apache.commons.io.FileUtils.cleanDirectory(new java.io.File(TEMP_GIT));
@@ -195,7 +196,7 @@ public class GitTest {
 			throw new RuntimeException(builder.insert(0, '[').append(']').toString());
 		}
 		if (idList.size() > 0)
-			throw new RuntimeException("[[\"getGitFileHis\", \"idList.size() > 0\"]]");
+			throw new RuntimeException("[[\"getGitFileHis\", \"idList.size() = "+ idList.size() +"\"]]");
 		return list;
 	}
 	public void getGitFile(String pathString, String url, String commitId, String objectId, java.io.OutputStream os){

@@ -510,8 +510,12 @@ ProfileSearchEngineTest=11
 				file.mkdirs();
 			if (repo == null || !repo.getObjectDatabase().exists())
 				try {
+					if (url.startsWith("git@"))
 					repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true)
 							.setTransportConfigCallback(JschUtil.config()).call().getRepository();
+					else
+						repo = Git.cloneRepository().setURI(url).setDirectory(file).setBare(true)
+							.setCredentialsProvider(JschUtil.getCredentialsProvider()).call().getRepository();
 				} catch (InvalidRemoteException e) {
 					throw new RuntimeException(e);
 				} catch (TransportException e) {

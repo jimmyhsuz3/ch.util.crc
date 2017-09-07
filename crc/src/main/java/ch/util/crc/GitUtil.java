@@ -26,6 +26,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import java.util.HashMap;
@@ -402,6 +405,82 @@ private class RepoCache {
 		for (Ref ref : refs)
 			set.add(ref.getLeaf());
 		return set;
+	}
+	private Map<String, Map<String, JsonNode>> repoCommitNodeMap = new HashMap<String, Map<String, JsonNode>>();
+	private Map<String, Map<String, Set<String>>> repoCommitLeafMap = new HashMap<String, Map<String, Set<String>>>();
+	private ObjectNode getNode(Repository repo, String commitId, Date from){
+		Map<String, JsonNode> nodeMap = repoCommitNodeMap.get(repo.toString());
+		if (nodeMap == null){
+			nodeMap = new HashMap<String, JsonNode>();
+			repoCommitNodeMap.put(repo.toString(), nodeMap);
+		}
+		Map<String, Set<String>> leafMap = repoCommitLeafMap.get(repo.toString());
+		if (leafMap == null){
+			leafMap = new HashMap<String, Set<String>>();
+			repoCommitLeafMap.put(repo.toString(), leafMap);
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		if (nodeMap.get(commitId) != null){
+			List<String> temps = new LinkedList<String>(leafMap.get(commitId));
+			List<String> lefts = new LinkedList<String>();
+			boolean match = false;
+			for (int t = 0; t < temps.size(); t++){
+				String leaf = temps.remove(t--);
+				lefts.add(leaf);
+				ObjectNode node = (ObjectNode) nodeMap.get(leaf);
+				node.withArray("parents");
+				try {
+					RevCommit commit = repo.parseCommit(repo.resolve(leaf));
+					if (!getCommitTime(commit.getCommitTime()).before(from)){
+						for (int i = 0; i < commit.getParentCount(); i++){
+							RevCommit parent = repo.parseCommit(commit.getParent(i));
+							temps.add(parent.name());
+						}
+						lefts.remove(leaf);
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			leafMap.get(commitId).clear();
+			leafMap.get(commitId).addAll(temps);
+			leafMap.get(commitId).addAll(lefts);
+		} else {
+			RevCommit commit;
+			try {
+				commit = repo.parseCommit(repo.resolve(commitId));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			ObjectNode node = mapper.createObjectNode();
+			nodeMap.put(commitId, node);
+			Date commitTime = getCommitTime(commit.getCommitTime());
+			node.put("commitTime", new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(commitTime));
+			ArrayNode parents = mapper.createArrayNode();
+			node.set("parents", parents);
+			
+			Set<String> leafs = new HashSet<String>();
+			leafMap.put(commitId, leafs);
+			
+			if (commitTime.before(from) || commit.getParentCount() == 0){
+				leafs.add(commitId);
+				return node;
+			}
+			
+			for (int i = 0; i < commit.getParentCount(); i++){
+				RevCommit parent;
+				try {
+					parent = repo.parseCommit(commit.getParent(i));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				JsonNode parentNode = getNode(repo, parent.getName(), from);
+				parents.add(parentNode);
+				leafs.addAll(leafMap.get(parent.getName()));
+			}
+			return node;
+		}
 	}
 }
 	private RepoCache repoCache = new RepoCache();

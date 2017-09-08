@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="jquery/jquery.min.js"></script>
+</head>
+<body>
+<pre>xxx中文("Content-Type", "text/plain; charset=utf-8")("Content-Type", "text/html; charset=utf-8")yyy</pre>
+<form onsubmit='return false;'>
+<input type='text' name='x1' value='100' />
+<input type='text' name='y1' value='200' />
+<input type='text' name='x2' value='300' />
+<input type='text' name='y2' value='400' />
+<input type='submit' value='testLink' onclick='testLink(this)' />
+</form>
+<input type='text' id='text1' value="da35ac7a4421eaebde385f7ff0b0a4041f6268de" size='50' />
+<input type='text' id='text2' value="src/main/webapp/easyGit.html" size='50' /><br/>
+<input type='text' id='text3' value="head" size='50' />
+<input type='text' id='text4' value="src/main/webapp/easyGit.html" size='50' /><br/>
+<input type='button' value='--' id='btn1' /><input type='button' value=':' id='btn2' /><br/>
+<div id='test' style='display:inline-block;background-color:#ffffcc'></div>
+</body>
+<script>
+	function DivLink(){
+		this.getD=function(){return $('<div style="position:absolute;border-top:1px solid red;"></div>')};
+		this.getLink=function(x1,y1,x2,y2){
+			var x=(x1+x2)/2,y=(y1+y2)/2,w=Math.sqrt(Math.pow((x2-x1),2)+Math.pow((y2-y1),2)),t=Math.atan2(y2-y1,x2-x1)*180/Math.PI;
+			return this.getD().css({left:x-w/2,top:y,width:w,transform:'rotate('+t+'deg)'});
+		}
+	}
+	function testLink(btn){
+		var divLink = new DivLink();
+		var x1=btn.form.x1.value*1,y1=btn.form.y1.value*1,x2=btn.form.x2.value*1,y2=btn.form.y2.value*1;
+		$('body').append(divLink.getD().css({left:0,top:y1,width:x1}))
+			.append(divLink.getD().css({left:0,top:y2,width:x2}))
+			.append(divLink.getLink(x1,y1,x2,y2));
+		console.log(btn.form.onsubmit,this);
+	}
+	function show($d,data){$d.empty().append($('<pre></pre>').html(data.replace(/</g,'&lt;').replace(/>/g,'&gt;')));}
+	$('#btn1').click(function(){
+		$.get('test',{action:'exec',
+			cmdarray:["git","diff",$('#text1').val(),"--",$('#text2').val()]},
+			function(data){show($('#test'),data);}
+		);
+	});
+	$('#btn2').click(function(){
+		$.get('test',{action:'exec',
+			cmdarray:["git","diff",$('#text1').val()+':'+$('#text2').val(),$('#text3').val()+':'+$('#text4').val()]},
+			function(data){show($('#test'),data);}
+		);
+	});
+</script>
+</html>

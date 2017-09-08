@@ -12,11 +12,15 @@
 <input type='text' name='y2' value='400' />
 <input type='submit' value='testLink' onclick='testLink(this)' />
 </form>
-<input type='text' id='text1' value="da35ac7a4421eaebde385f7ff0b0a4041f6268de" size='50' />
-<input type='text' id='text2' value="src/main/webapp/easyGit.html" size='50' /><br/>
-<input type='text' id='text3' value="head" size='50' />
-<input type='text' id='text4' value="src/main/webapp/easyGit.html" size='50' /><br/>
-<input type='button' value='--' id='btn1' /><input type='button' value=':' id='btn2' /><br/>
+<form onsubmit='return false;'>
+<input type='text' name='cmd1' value="da35ac7a4421eaebde385f7ff0b0a4041f6268de" size='50' />
+<input type='text' name='cmd2' value="src/main/webapp/easyGit.html" size='50' /><br/>
+<input type='text' name='cmd3' value="head" size='50' />
+<input type='text' name='cmd4' value="src/main/webapp/easyGit.html" size='50' /><br/>
+<input type='text' name='dir' value="C:\\Users\\jimmy.shu\\git\\ch-test-easyweb" size='50' />
+<select id='testList'><option></option></select>
+<input type='submit' value='--' onclick='testExec1(this)' /><input type='submit' value=':' onclick='testExec2(this)' /><br/>
+</form>
 <div id='test' style='display:inline-block;background-color:#ffffcc'></div>
 </body>
 <script>
@@ -36,17 +40,39 @@
 		console.log(btn.form.onsubmit,this);
 	}
 	function show($d,data){$d.empty().append($('<pre></pre>').html(data.replace(/</g,'&lt;').replace(/>/g,'&gt;')));}
-	$('#btn1').click(function(){
-		$.get('test',{action:'exec',
-			cmdarray:["git","diff",$('#text1').val(),"--",$('#text2').val()]},
+	function testExec1(btn){
+		var form = btn.form;
+		$.get('test',{action:'exec',dir:form.dir.value,
+			cmdarray:["git","diff",form.cmd1.value,"--",form.cmd2.value]},
 			function(data){show($('#test'),data);}
 		);
-	});
-	$('#btn2').click(function(){
-		$.get('test',{action:'exec',
-			cmdarray:["git","diff",$('#text1').val()+':'+$('#text2').val(),$('#text3').val()+':'+$('#text4').val()]},
+	}
+	function testExec2(btn){
+		var form = btn.form;
+		$.get('test',{action:'exec',dir:form.dir.value,
+			cmdarray:["git","diff",form.cmd1.value+':'+form.cmd2.value,form.cmd3.value+':'+form.cmd4.value]},
 			function(data){show($('#test'),data);}
 		);
+	}
+	$(function(){
+		var list={
+			'easyGit.html':['C:\\Users\\jimmy.shu\\git\\ch-test-easyweb',
+				'da35ac7a4421eaebde385f7ff0b0a4041f6268de','src/main/webapp/easyGit.html',
+				'head','src/main/webapp/easyGit.html'],
+			'testLink.html':['C:/Users/jimmy.shu/git/crc',
+				'e59c5d','crc/src/main/resources/META-INF/html/test.html',
+				'531883f8c1b9ea5faf4f3214a03ad13be518ff6e','crc/src/main/resources/META-INF/html/testLink.html'],
+		};
+		$('#testList').change(function(){
+			var i=$(this).children('option:selected').text();
+			if(i){
+				this.form.dir.value=list[i][0];
+				this.form.cmd1.value=list[i][1];
+				this.form.cmd2.value=list[i][2];
+				this.form.cmd3.value=list[i][3];
+				this.form.cmd4.value=list[i][4];
+			}
+		}).each(function(){for(var i in list)$(this).append($('<option></option>').html(i));});
 	});
 </script>
 </html>

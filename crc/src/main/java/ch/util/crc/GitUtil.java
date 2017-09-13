@@ -481,6 +481,7 @@ private class RepoCache {
 			}
 			return node;
 		}
+		return null;
 	}
 }
 	private RepoCache repoCache = new RepoCache();
@@ -641,7 +642,7 @@ ProfileSearchEngineTest=11
 				String id = commit != null ? treeFile(repo, commit.name(), pathString) : null;
 				if (objectId == null){
 					objectId = id;
-				} else if (objectId != null && (id == null || !id.equals(objectId))){
+				} else if (objectId != null && (id == null || !id.equals(objectId))){ //:/*5*/, HsitoryManager=5, null(ant-2*4-3).change
 					Map<String, String> map = new java.util.HashMap<String, String>();
 					map.put(COMMIT_ID, commitId);
 					map.put(OBJECT_ID, objectId);

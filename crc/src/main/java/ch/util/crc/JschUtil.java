@@ -67,10 +67,12 @@ git@gitlab.com:jimmyhsuz3gl/ch-zhao-a.git
 		TransportConfigCallback transportConfigCallback = new TransportConfigCallback() {
 			@Override
 			public void configure(Transport transport) {
+				System.out.printf("%s(%s)\n", transport.getURI(), transport);
 				if (transport instanceof SshTransport){
 					SshTransport sshTransport = (SshTransport) transport;
 					sshTransport.setSshSessionFactory(sshSessionFactory);
 				}
+				else transport.setCredentialsProvider(getCredentialsProvider());
 			}
 		};
 		config = transportConfigCallback;

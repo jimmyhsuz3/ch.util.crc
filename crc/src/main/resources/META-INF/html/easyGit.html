@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="jquery/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="jquery/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="jquery/themes/demo.css">
+		<script type="text/javascript" src="jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="jquery/jquery.easyui.min.js"></script>
+		<style>
+			table{table-layout:fixed;width:100%;border-collapse:collapse;}
+			td{vertical-align:top}
+			div.tree-div{border:2px solid blue;width:99%;overflow:auto}
+			pre{margin:0}
+			.tooltipbox{position:relative;display:inline-block;}
+			.tooltipbox:hover .tooltiptext{
+				visibility:visible;opacity:0;
+				animation-name:example;
+    			animation-duration:1s;
+    			animation-delay:0s;
+			}
+			.tooltipbox .tooltiptext{
+				position:absolute;visibility:hidden;opacity:0;transition:opacity 1s;
+			    left:50%;top:calc(100% + 5px);
+			    margin-left:0px;
+			    border-radius:3px;
+			    padding:3px;
+			    text-align:center;white-space:nowrap;font-size:small;
+			    color: #fff;background-color: #999;
+			    z-index: 1;
+			}
+			.tooltipbox .tooltiptext::after{
+			    content: "";
+			    position:absolute;top:-10px;left:0%;
+			    margin-left:5px;
+			    border-width:5px;
+			    border-style:solid;
+			    border-color:transparent transparent #999 transparent;
+			}
+			@keyframes example{
+				from{visibility:visible;opacity:1;}
+				to{visibility:hidden;opacity:0}
+			}
+		</style>
+	</head>
+	<body>
+		<input type='text' id='strFrom' value="2017-7-30 0:0:0"/><input type='text' id='strTo'/>
+		<input type='checkbox' id='check1' checked='checked'/><input type='button' value='testByDate' id='btn1'/>
+		<input type='button' value='getGitFileList' id='btn2'/>
+		<input type='button' value='test' id='btn3'/>
+		<input type='button' value='cleanClose' id='btn6'/>
+		<input type='button' value='test' id='btnTest'/><hr/>
+		<table border='1'>
+			<tr>
+				<td width='50%'><div id='div1' class='tree-div'><ul></ul></div></td>
+				<td width='50%'><div id='div2' class='tree-div'></div></td>			
+			</tr>
+			<tr class='test'><td colspan='2'>&nbsp;</td></tr>
+			<tr class='allUrl'><td colspan='2'>
+				<input type='button' value='getAllUrl' id='btn4'/><input type='button' value='fetchAllLastCommit' id='btn5' disabled='disabled'/>
+				<select><option></option></select>
+				<input type='text' id='input1' size='50' value='git@github.com:104corp/104plus-api-proxy.git'/>
+				<div class='ul-div' style='padding:10px'></div>
+			</td></tr>
+			<tr>
+				<td>
+<form id='getGitFileListForm1'>
+<input type='button' value='getGitFileList*3(list)'/>
+</form>
+<form id='getGitFileListForm2'>
+<input type='text' name='pathString' size='50' value='parent/simpleweb/src/main/java/simpleweb/TestServlet.java'/><br/>
+<input type='text' name='url' size='50' value='https://github.com/jimmyhsuz3/ch.test.parent.git'/><br/>
+<input type='text' name='commitId' size='50' />
+<input type='button' value='getGitFileList*3(his2)'/>
+</form>
+<form id='fetchRepoBranchCommitForm'>
+<input type='text' name='url' size='50' value='git@github.com:104corp/104plus-api-proxy.git'/>
+<input type='button' value='fetchRepoBranchCommit*2'/>
+</form>
+<pre>
+pathString*4.important-1.optional+his2.list
+getGitFileList*3(list,his.commitId,his.null)+fetchRepoBranchCommit*2
+
+[2017-08-29 18:00:20]*15
+[2017-08-30 15:46:04]*14
+
+easyweb=8-15-6
+DiffEntry[ADD
+HsitoryManager=5
+/dev/null
+ProfileSearchEngineTest=11
+</pre>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
+	</body>
+<script>
+// .replace(/</g,'&lt;').replace(/>/g,'&gt;') *4
+// $('#div2').scrollLeft(0).children('div').css('display','inline-block'); *4
+// 2block(-+-+), fnClick, fillRemain, TabUtil, 44
+// .tooltipbox .tooltiptext, $('#btn, https://www.w3schools.com/howto/howto_css_tooltip.asp
+// http://www.flycan.com/article/css/css-div-position-center-1562.html
+function NodeUtil(ck){
+	function isArray(a){return Object.prototype.toString.call(a)==='[object Array]';}
+	function get(o,k){
+		k=[].concat(k);
+		var s=k.shift();
+		if(k.length>0)return get(getV(o,s),k);else return getV(o,s);
+		function getV(o,k){return o[isArray(o) ? k*1 : k];}
+	}
+	function getNodes(d,id){
+		var o=get(d,id);
+		if(typeof(o)=='object'){
+			var c=[];
+			var a=isArray(o);
+			for(var i in o){
+				var t=i;//t=key or index
+				if(a){
+					t=o[i];//t
+					if(typeof(t)=='object'){
+						var keys=Object.keys(t);
+						if(keys.length>0)
+							t=keys[0];//t
+						if(t.indexOf('_')==0)
+							continue;
+						if(keys.length==1){
+							i=[i,t];
+							if(ck.checked){
+								c.push({id:[].concat(id).concat(i),text:t});
+								continue;
+							}
+						}
+						if(keys.length==5){
+							if($.inArray('commitId',keys)!=-1 && $.inArray('objectId',keys)!=-1 &&
+									$.inArray('commitTime',keys)!=-1 && $.inArray('fullMessage',keys)!=-1){
+								t='['+o[i]['commitTime']+'] '+o[i]['commitId'].substring(0,6)+'-'+o[i]['objectId'].substring(0,6)+' : '+o[i]['fullMessage'];
+								t=t.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+								i=[i,o[i]['commitId'],o[i]['objectId']];
+								c.push({id:[].concat(id).concat(i),text:t});
+								continue;
+							}
+						}
+					}
+				}else{
+					if(isArray(o[i])){
+						var len=o[i].length;
+						for(var i1 in o[i])
+							if(typeof(o[i][i1])=='object'){
+								var keys=Object.keys(o[i][i1]);
+								if(keys.length==1 && keys[0].indexOf('_1')==0)
+								{
+									t='['+o[i][i1][keys[0]]+'] '+t.substring(0,6)+' : ';
+									len--;
+								}
+							}
+						for(var i1 in o[i])
+							if(typeof(o[i][i1])=='object'){
+								var keys=Object.keys(o[i][i1]);
+								if(keys.length==1 && keys[0].indexOf('_2')==0)
+								{
+									t+=o[i][i1][keys[0]];
+									len--;
+								}
+							}
+						for(var i1 in o[i])
+							if(typeof(o[i][i1])=='object'){
+								var keys=Object.keys(o[i][i1]);
+								if(keys.length==1 && keys[0].indexOf('_3')==0)
+								{
+									t+=o[i][i1][keys[0]];
+									len--;
+								}
+							}
+						for(var i1 in o[i])
+							if(typeof(o[i][i1])=='object'){
+								var keys=Object.keys(o[i][i1]);
+								if(keys.length==1 && keys[0].indexOf('_4')==0)
+								{
+									t+=o[i][i1][keys[0]];
+									len--;
+								}
+							}
+						t=t.replace(/</g,'&lt;').replace(/>/g,'&gt;')
+						+' ['+len+']';
+					}else if(typeof(o[i])!='object'){
+						c.push({id:[].concat(id).concat(i),text:t+' = '+o[i]});
+						continue;
+					}
+				}
+				c.push({id:[].concat(id).concat(i),text:t,state:'closed'});
+			}
+			return c;
+		}else{
+			if(o.indexOf('\n')!=-1)
+				o=o.substring(0,o.indexOf('\n'));		
+			return [{id:id,text:o}];
+		}
+	}
+	// -isArray.+get.-getV.+getNodes
+	this.get=get;
+	this.getNodes=getNodes;
+	this.getRoots=function(d){
+		var a=[];
+		for(var i in d)
+			a.push({id:[i],text:i,state:Object.keys(d[i]).length?'closed':''});
+		return a;
+	}
+	this.renderPre=function(d){
+		var a=d.split('\n');
+		var $d=$('<div></div>');
+		for(var i in a)
+			$d.append($('<pre></pre>').html(a[i].replace(/</g,'&lt;').replace(/>/g,'&gt;'))
+				.css('color',a[i].startsWith('+') ? 'green' : a[i].startsWith('-') ? 'red' : '#aaaaaa')
+				.css('font-weight',a[i].startsWith('+')||a[i].startsWith('-') ? 'bold' : 'normal')
+				.css('background-color',a[i].indexOf('\r')!=-1 ? '#ffffcc':'white'));
+		return $d;
+	}
+	this.fnClick=function(node){
+		console.log('node.id = ',node.id);
+		if(node.state=='closed')
+			$(this).tree('expand',node.target);
+		else $(this).tree('collapse',node.target);
+		if($(this).tree('isLeaf',node.target))
+			if($(node.target).css('color')=='rgb(0, 0, 0)')
+				$(node.target).css({color:'#FF0000','font-weight':'normal'});
+			else $(node.target).css({color:'#000000','font-weight':'normal'});
+	};
+	this.fillRemain=function(){
+		var ds=arguments;
+		if(typeof(fill)=='undefined')
+			if($('body').outerHeight()<$(window).height()-10)
+				(function fill(){
+					$(ds[0]).height($(ds[0]).height()+10);
+					if($('body').outerHeight()<$(window).height()-10)
+						setTimeout(fill,0);
+					else
+						for(var i in ds)
+							$(ds[i]).height($(ds[0]).height());
+				})();
+			else
+				console.log($('body').outerHeight(),$(window).height());
+	};
+	this.absBox=function(msg){
+		var d0="<div style='position:absolute;left:0;top:0;right:0;bottom:0'></div>",
+			d1="<div style='position:absolute;left:50%;top:50%;width:100px;height:100px;margin-left:-50px;margin-top:-50px;border:1px solid red'></div>",
+			d2="<div style='position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #ccc'></div>",
+			d3="<div style='position:absolute;left:0;top:50%;right:0;border-top:1px dashed #ccc'></div>";
+		$(d1).append(msg).appendTo($(d0).append(d2).append(d3).appendTo($('body'))).mouseleave(function(){ //mouseout
+			$(this).parent().animate({opacity:0},1000,function(){$(this).remove();});
+		}).each(function(){
+			$(this).css('width','').css({'white-space':'nowrap','margin-left':-$(this).width()/2});
+			$(this).css('height','').css({'margin-top':-$(this).height()/2});
+		});
+	}
+}
+function TabUtil(tab,f){
+	var $tr=$(tab).find('tr').hide();
+	this.show=function(c){
+		if(c){
+			var $trs=
+			$tr.hide().filter(isNaN(c) ? '.'+c : (':nth-child('+c+')')).show();
+			if(f[c.toString()])f[c.toString()]();
+			return $trs;
+		}else{
+			var n = $tr.each(function(i){if($(this).is(':visible'))c=i+1;}).size();
+			if(!c)c=1;else if(c==n)c=1;else c++;
+			this.show(c);
+		}
+	}
+}
+function query(t){
+	var s=window.location.search.substring(1).split('&');
+	for(var i in s){
+		var p=s[i].split('=');
+		if(p[0] == t)return p[1];
+	}
+}
+function getDay(t){
+	var d=new Date(new Date().getTime()-t*1000*60*60*24);
+	return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+' 0:0:0';
+}
+$(document).ready(function(){
+	(function test(){
+		console.log("typeof({})",typeof({}));
+		console.log("typeof([])",typeof([]));
+		console.log("{}.toString()",{}.toString());
+		console.log("[].toString()",[].toString());
+		console.log("Object.prototype.toString.call([])",Object.prototype.toString.call([]));
+		console.log([0].concat([1,1]).concat([[2],[2,2]]).concat([3,3]));
+		var a=[0,1,2];
+		console.log(a.shift(),a);
+		$.get('test',{action:'getGitFileHis',
+			pathString:'parent/simpleweb/src/main/java/simpleweb/TestServlet.java',
+			url:'https://github.com/jimmyhsuz3/ch.test.parent.git'},
+			function(data){console.log(data);},
+			'json');
+		function testBind(){return this.x;}
+		var t={x:1,testBind1:testBind,testBind2:testBind.bind({x:2})};
+		console.log('testBind', t.testBind1(), t.testBind2());
+	})();
+	var nodeUtil = new NodeUtil($('#check1').get(0));
+	var tabUtil = new TabUtil($('table').get(0),{'1':function(){nodeUtil.fillRemain($('#div1').get(0),$('#div2').get(0));}});
+	var error=function(c){
+		return new Function('e',"return function "+c+"(d){return $('<pre></pre>').html(arguments.callee.name+'\\n\\n'+d+'\\n\\n\\n'+e);}");
+	};
+	(function(){
+		var oget=$.get;
+		$.get=function(a,c,d,e){
+			var s={};
+			for(var i in arguments)
+				switch(typeof(arguments[i])){
+					case 'string':
+						if(!s.url)s.url=arguments[i];else s.dataType=arguments[i];
+						break;
+					case 'object':
+						if(!s.data)s.data=arguments[i];
+						break;
+					case 'function':
+						if(!s.success)s.success=arguments[i];
+						else{
+							var error=arguments[i];
+							s.error=function(jqXHR,textStatus,errorThrown){nodeUtil.absBox(error(errorThrown));};
+						}
+						break;
+				}
+			if(s.error)$.ajax(s);else oget.apply(this,arguments);
+		}
+	})();
+	(function(){
+		$('#strFrom').val(getDay(query('t')));
+	})();
+	$('#btn1').click(function(){
+		$('#div1').empty().append('<ul></ul>'); //*2 + #div1>ul
+		$.get('test',{action:'testByDate',strFrom:$('#strFrom').val(),strTo:$('#strTo').val()},function(data){
+			$('#div1>ul').empty().tree().tree('loadData',nodeUtil.getRoots(data)).tree({
+				onBeforeExpand:function(node){
+					var thiz = this;
+					$.each($(this).tree('getChildren',node.target),function(){
+						$(thiz).tree('remove',this.target);
+					});
+					$(this).tree('append',{
+			    		parent:node.target,
+			    		data:nodeUtil.getNodes(data,node.id)
+			    	}).tree({onClick:function(node){
+			    		nodeUtil.fnClick.call(this,node);
+						$('#div2').empty();
+			    		if($(this).tree('isLeaf',node.target))
+			    		{
+			    			$('#div2').empty().append(nodeUtil.renderPre(nodeUtil.get(data,node.id)));
+			    			$('#div2').scrollLeft(0).children('div').css('display','inline-block');
+			    		}
+			    	},onDblClick:function(node){
+			    		// getGitFileList*3(his.null)
+			    		queue.publish('form',{form:'getGitFileListForm2',pathString:/ (.+)]/.exec(node.id[3])[1],url:node.id[0]});
+			    	}});
+				}
+			}).tree({onClick:nodeUtil.fnClick});
+		},'json');
+	});
+	function Queue(){
+		var q={};
+		this.subscribe=function(name,fun){q[name]=fun;return this;};
+		this.publish=function(name,e){if(q[name])return q[name](e);};
+	};
+	var queue = new Queue().subscribe('getGitFileList',function(e){
+		var data=e.data,append=e.append;
+		(function(url,action,func,dataType){func(data);})('test',{action:'getGitFileList'},function(data){
+			var $ul;
+			if(!append){
+			$('#div1').empty().append('<ul></ul>');
+				$ul=$('#div1>ul');
+			}else
+				$ul=$('<ul></ul>').appendTo($('#div1').append('<hr/>'));
+			if(data.builder){
+				for(var i in data.builder)
+					// javaForm*6=builder+time.object+function+time.time
+					$('#div1>ul').append($('<li></li>').html('{"'+data.builder[i][0]+'", "'+data.builder[i][1]+'"}'));
+				return;
+			}
+			$ul.empty().tree().tree('loadData',nodeUtil.getRoots(data)).tree({ //1
+				onBeforeExpand:function(node){
+					var thiz = this;
+					$.each($(this).tree('getChildren',node.target),function(){
+						$(thiz).tree('remove',this.target);
+					});
+					$(this).tree('append',{
+			    		parent:node.target,
+			    		data:nodeUtil.getNodes(data,node.id)
+			    	}).tree({onClick:function(node){
+			    		nodeUtil.fnClick.call(this,node);
+						$('#div2').empty();
+			    		if($(this).tree('isLeaf',node.target)) //1
+			    			if(node.id.length==5)
+			    				if($('#check1').get(0).checked){
+					    			var p={action:'getGitFile',
+					    					pathString:node.id[0],
+						    				url:nodeUtil.get(data,[node.id[0],'url']),
+						    				commitId:nodeUtil.get(data,[node.id[0],'commitObjects',node.id[2],'commitId']),
+						    				objectId:nodeUtil.get(data,[node.id[0],'commitObjects',node.id[2],'objectId'])
+					    			}
+					    			$.get('test',p,function(data){
+						    			$('#div2').empty().append($('<pre></pre>').html(data.replace(/</g,'&lt;').replace(/>/g,'&gt;')));
+						    			$('#div2').scrollLeft(0).children('div').css('display','inline-block');
+					    			},'html');
+								}else if(true){
+			    					var p={action:'getGitFileDiff',
+						    				pathString:node.id[0],
+							    			url:nodeUtil.get(data,[node.id[0],'url']),
+											commitId1:nodeUtil.get(data,[node.id[0],'commitObjects',node.id[2]*1+1]) ?
+												nodeUtil.get(data,[node.id[0],'commitObjects',node.id[2]*1+1,'commitId']) : null,
+						    				commitId2:nodeUtil.get(data,[node.id[0],'commitObjects',node.id[2],'commitId'])
+					    			}
+					    			$.get('test',p,function(data){
+						    			$('#div2').empty().append(nodeUtil.renderPre(data));
+						    			$('#div2').scrollLeft(0).children('div').css('display','inline-block');
+					    			},'html');
+		    					}else
+		    						$('#div2').empty();
+			    			else{
+			    				$('#div2').empty().append($('<pre></pre>').html(nodeUtil.get(data,node.id)));
+				    			$('#div2').scrollLeft(0).children('div').css('display','inline-block');
+			    			}
+			    	}}); //1
+				}
+			}).tree({onClick:nodeUtil.fnClick});
+		},'json');
+	}); //1
+	$('#btn2').click(function(){
+		queue.publish('form',{form:'getGitFileListForm1'});
+/*		getGitFileList*3(list)
+		$.get('test',{action:'getGitFileList'},function(data){
+			queue.publish('getGitFileList',data);
+		},'json');
+*/
+	});
+	function fetchRepoBranchCommit($td,url){
+		var d='<div style="display:inline-block;height:100%;border:solid 1px blue;overflow:auto;vertical-align:top"></div>',
+		$ul=$('<div style="height:300px;margin-top:5px"></div>').appendTo($td.children('.ul-div').empty().append($('<strong></strong>').html(url))),
+		$ul1=$(d).css('width','60%').appendTo($ul),
+		$ul2=$(d).css('width','39%').appendTo($ul);
+		if(url)
+			$.get('test',{action:'fetchRepoBranchCommit',url:url},function(data){
+				$ul1.append(treeWalk(data,url));
+			},'json');
+		function treeWalk(data,url){
+			var a=[];
+			for(var i in data)
+				a.push({id:{url:url,commitId:data[i][0]},text:i+' '+javaForm([data[i]]),state:'closed'});
+			return $('<ul></ul>').tree().tree('loadData',a)
+				.tree({onClick:function(node){
+					var id={url:node.id.url,pathString:node.id.pathString,commitId:node.id.commitId};
+					$ul2.empty().append(pre(id.url)).append(pre(id.pathString)).append(pre(id.commitId)).append(pre());
+					if(node.state=='closed')
+						if($(this).tree('getChildren',node.target).length)
+							$(this).tree('expand',node.target);
+						else
+							$.get('test',{action:'treeWalkFolder',url:id.url,pathString:id.pathString,commitId:id.commitId},
+								function(data){
+									$(this).tree('append',{
+										parent:node.target,
+										data:treeWalkFolder(data,node.id)
+									}).tree('expand',node.target);
+								}.bind(this),'json');
+					else if($(this).tree('isLeaf',node.target))
+						$.get('test',{action:'getGitFileHis',pathString:id.pathString,url:id.url,commitId:id.commitId},
+							function(data){
+								for(var i in data)
+									$ul2.append(pre(javaForm([[data[i].commitTime],[data[i].commitId,data[i].objectId],[data[i].fullMessage]])));
+								var d={};
+								d[id.pathString]={url:id.url,commitObjects:data};
+/*
+								queue.publish('getGitFileList',d);
+*/
+						},'json');
+					else
+						$(this).tree('collapse',node.target);
+				},onDblClick:function(node){
+					// getGitFileList*3(his.commitId)
+					if($(this).tree('isLeaf',node.target))
+		    			queue.publish('form',{form:'getGitFileListForm2',pathString:node.id.pathString,url:node.id.url,commitId:node.id.commitId});
+		    	}});
+			function treeWalkFolder(data,id){
+				var a=[];
+				for(var i in data){
+					var t=id.pathString ? data[i].substring(data[i].indexOf(id.pathString)+id.pathString.length) : data[i];
+					a.push({id:{url:id.url,pathString:data[i],commitId:id.commitId},text:t,state:t.endsWith('/')?'closed':''});
+				}
+				a.sort(function(a,b){
+					a=a.text;
+					b=b.text;
+					if(a.endsWith('/'))if(b.endsWith('/'))return a>b?1:a==b?0:-1;else return -1;
+					else if(b.endsWith('/'))return 1;else return a>b?1:a==b?0:-1;
+				});
+				return a;
+			};
+			function pre(html){return $('<pre></pre>').html(html?html:'&nbsp;');};
+		}
+	}
+	$('#btn3').click(function(){
+		$.get('test',{action:'test',reset:$('#check1').get(0).checked},
+			function(data){
+				$('#div2').empty().append($('<pre></pre>').html(data));
+				nodeUtil.absBox(data);
+			}
+		,error('test')('#btn3')
+		);
+	});
+	$('#btnTest').click(function(){tabUtil.show();});
+	$('input:button').filter(function(){
+		return $(this).prop('id').startsWith('btn');
+	}).each(function(){
+		$(this).after($('<div class="tooltipbox"><div>').append($('<span class="tooltiptext"></span>').html($(this).prop('id'))))
+			.prependTo($(this).next());
+	});
+	function javaForm(d){
+		var t='';
+		for(var i in d){
+			t+='{"';
+			for(var i1 in d[i]){
+				t+=d[i][i1];
+				if(i1<d[i].length-1)t+='", "';
+			}
+			t+='"}';
+		}
+		return t;
+	}
+	$('#btn4').click(function(){
+		var thiz=this;
+		$.get('test',{action:'getAllUrl'},
+			function(data){
+				for(var i in data)
+					$(thiz).parents('td').first().append(
+						$('<div></div>').append(
+							$('<input type="button" />').val(data[i]).click(function(){
+								var thiz=this;
+								$(thiz).next().html(''); //span.empty
+								$.get('test',{action:'fetchLastCommit',url:$(this).val()},function(data){
+									$(thiz).next().html(javaForm(data)).css('color',data.length>1?'red':'blue');
+								},'json');
+							})
+						).append('<span></span>')
+					);
+				$(thiz).prop('disabled','disabled');
+				$('#btn5').prop('disabled','');
+				var $td=$(thiz).parents('td').first();
+				$td.children('select').change(function(){
+					fetchRepoBranchCommit($td,$(this).children('option:selected').text());
+				}).each(function(){
+					for(var i in data)
+						$(this).append($('<option></option>').html(data[i]));
+				});
+			}
+		,'json');
+	});
+	$('#btn5').click(function(){
+		var thiz=this;
+		$(thiz).parents('td').first().find('input').next('span').html(''); //span.empty
+		$.get('test',{action:'fetchAllLastCommit'},
+			function(data){
+				for(var i in data)
+					$(thiz).parents('td').first().find('input[value="'+i+'"]').next().html(javaForm(data[i]))
+						.css('color',data[i].length>1?'red':'blue');
+			}
+		,'json');
+	});
+	$('#input1').keypress(function(e){
+		if((e.keyCode ? e.keyCode : e.which)==13)
+			fetchRepoBranchCommit($(this).parents('td').first(),$(this).val());
+	});
+	$('#btn6').click(function(){
+		$.get('test',{action:'cleanClose'},function(d){nodeUtil.absBox(d);},error('cleanClose')('#btn6'));
+	});
+	(function(){
+		$('#getGitFileListForm1>input:button').click(function(){
+			$.get('test',{action:'getGitFileList'},function(data){
+				queue.publish('getGitFileList',{data:data});
+			},'json');
+			tabUtil.show(1);
+		});
+		$('#getGitFileListForm2>input:button').click(function(){
+			var id={pathString:this.form.pathString.value,url:this.form.url.value,commitId:this.form.commitId.value};
+			$.get('test',{action:'getGitFileHis',pathString:id.pathString,url:id.url,commitId:id.commitId},
+				function(data){
+					var d={};
+					d[id.pathString]={url:id.url,commitObjects:data};
+					queue.publish('getGitFileList',{data:d,append:true});
+					tabUtil.show(1);
+			}.bind(this),'json');
+		});
+		$('#fetchRepoBranchCommitForm>input:button').click(function(){
+			fetchRepoBranchCommit(tabUtil.show('allUrl').children('td').eq(0),this.form.url.value);
+		});
+		queue.subscribe('form',function(e){
+			var $form=$($('#'+e.form).get(0));
+			$form.children('input').each(function(){
+				if(this.name)
+					$(this).val(e[this.name]);
+			});
+			$form.children('input:button').trigger('click');
+		});
+	})();
+});
+</script>
+</html>

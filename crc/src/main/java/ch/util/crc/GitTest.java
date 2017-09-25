@@ -22,14 +22,18 @@ public class GitTest {
 	synchronized
 	private Repository getRepoFromMap(String url){
 		if (repoMap.containsKey(url)){
+/* System.out
 			System.out.println(url + " from repoMap\n");
+*/
 			return repoMap.get(url);
 		}
 		for (GitRepo gitRepo : GIT_REPOS)
 			if (gitRepo.getUrl().equals(url)){
 				Repository repo = gitUtil.getRepo(gitRepo, TEMP_GIT);
 				repoMap.put(gitRepo.getUrl(), repo);
+/* System.out
 				System.out.println(url + " from getRepo\n");
+*/
 				return repo;
 			}
 		throw new RuntimeException("fail: getRepo: " + url);
@@ -73,6 +77,7 @@ public class GitTest {
 	}
 	public void close(){for(Repository repo : repoMap.values())repo.close();repoMap.clear();}
 	public String testByDate(String strFrom, String strTo){
+		long start = System.currentTimeMillis();
 		Date from = null;
 		Date to = null;
 		if (strFrom != null && !strFrom.trim().isEmpty())
@@ -117,6 +122,7 @@ public class GitTest {
 				node.set(url, gNode);
 			}
 		}
+		System.out.println("testByDate = " + (new Date().getTime() - start));
 		try {
 			return mapper.writeValueAsString(node);
 		} catch (IOException e) {

@@ -139,8 +139,10 @@ public class GitUtil {
 						System.out.println(String.format("%s, %s, %s, %s, %s\n",
 								gitRepo.getUrl(), committer.getName(), committer.getEmailAddress(), gitRepo.getHead(), gitRepo.getLastCommitTime()));
 						if (gitRepo.getName().equals(committer.getName()) && gitRepo.getEmailAddress().equals(committer.getEmailAddress())){
+/* System.out
 							System.out.println(treeWalk(repo, commit.toObjectId().name()));
 							System.out.println(diff(repo, commit.toObjectId().name()));
+*/
 							return true;
 						}
 					}
@@ -304,6 +306,7 @@ private class RepoCache {
 			}
 		}
 		if (first){
+			System.out.printf("repoCache.getAllRefsParent "); //System.out.printf("repoCache.getAllRefs-allrefs*3
 			System.out.println(String.format("[%s]%s", repo.toString(), commitId));
 			for (String id : ladderMap.keySet())
 				if (ladderMap.get(id) > 0)
@@ -343,28 +346,33 @@ private class RepoCache {
 					// commits.leafs+temps.lefts
 					List<String> temps = new LinkedList<String>(refMap.get(name).get(leafs));
 					List<String> lefts = new LinkedList<String>();
+					Set<String> ladderSet = new HashSet<String>();
 					boolean match = false;
 					for (int t = 0; t < temps.size(); t++){
 						String leaf = temps.remove(t--);
+						if (!ladderSet.add(leaf)) // ladderSet(temps.leaf.continue)
+							continue;
 						lefts.add(leaf); // remove then add
 						try {
 							RevCommit commit = repo.parseCommit(repo.resolve(leaf));
 							if (!getCommitTime(commit.getCommitTime()).before(from)){ //:from-to
 								for (int i = 0; i < commit.getParentCount(); i++){ // ant-2*6-6
-									RevCommit parent = repo.parseCommit(commit.getParent(i));
+									RevCommit parent = repo.parseCommit(commit.getParent(i)); //:short getParent(i).name()
 									refMap.get(name).get(commits).add(parent.name()); // add commits
 									temps.add(parent.name()); // add temps
 									if (parent.name().equals(commitId)){
+										if (!refs.contains(name)) //:short duplicated ref
 										refs.add(name);
 										match = true;
 									}
 								}
+								if (commit.getParentCount() > 0) //:short leaf-first
 								lefts.remove(leaf); // for-all then remove lefts
 							}
 						} catch (IOException e) {
 							throw new RuntimeException(e);
 						}
-						if (match)
+						if (match && !match) //:short commit
 							break;
 					}
 					refMap.get(name).get(leafs).clear();
@@ -375,7 +383,7 @@ private class RepoCache {
 			throw new RuntimeException(e);
 		}
 		// important-1*4-4: getAllRefsByCommit=getAllRefsParent
-//		if (refs.size() > 0)return refs;
+		if (refs.size() > 0)return refs; //:short deep-from, more-commits
 		List<String> list = new java.util.ArrayList<String>();
 		RevCommit commit;
 		try {
@@ -483,6 +491,84 @@ private class RepoCache {
 		}
 		return null;
 	}
+	private List<Map<String, String>> getAllRefsFileHis(Repository repo, String pathString){
+		Map<String, Map<String, String>> commitMap = new HashMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> commitPaths = new HashMap<String, Map<String, String>>();
+		Map<String, List<String>> commitParents = new HashMap<String, List<String>>();
+		List<Map<String, String>> objectList = new java.util.ArrayList<Map<String, String>>();
+		Set<String> ladderSet = new HashSet<String>();
+		for (Ref ref : getAllRefs(repo.getAllRefs().values())){
+			String name = ref.getName();
+			if (name.startsWith(heads))
+				name = name.substring(heads.length());
+			List<String> temps = new LinkedList<String>();
+			temps.add(ref.getObjectId().name());
+			for (int t = 0; t < temps.size(); t++){
+				String leaf = temps.remove(t--);
+				if (!ladderSet.add(leaf)) // ladderSet(temps.leaf.continue)
+					continue;
+				String objectId = getObjectIdByCommitId(repo, pathString, leaf, commitMap, commitPaths, commitParents);
+				boolean zrnuch = false;
+				List<String> parents = commitParents.get(leaf);
+				for (String parentId : parents){
+					temps.add(parentId);
+					String id = getObjectIdByCommitId(repo, pathString, parentId, commitMap, commitPaths, commitParents);
+					if (objectId != null && (id == null || !id.equals(objectId))){ //:/*5*/, HsitoryManager=5, null(ant-2*4-3).change
+						zrnuch = true;
+					}
+				}
+				if (zrnuch || parents.size() == 0){ // ant-2*6-8(2.0.null)
+					Map<String, String> map = commitMap.get(leaf);
+					map.put(OBJECT_ID, objectId);
+					map.put("refs", getAllRefsByCommit(repo, leaf).toString());
+					objectList.add(map);
+				}
+			}
+			System.out.printf("repoCache.getAllRefsFileHis [%s] = %s, %s, %s\n", repo, name,
+				repoRefCommitMap.get(repo.toString()).get(name).get(commits).size(), repoRefCommitMap.get(repo.toString()).get(name).get(leafs));
+		}
+		java.util.Collections.sort(objectList, new ObjectComparator());
+		return objectList;
+	}
+	private String getObjectIdByCommitId(Repository repo, String pathString, String commitId,
+			Map<String, Map<String, String>> commitMap,
+			Map<String, Map<String, String>> commitPaths,
+			Map<String, List<String>> commitParents) {
+		if (commitMap.containsKey(commitId))
+			if (commitPaths.get(commitId).containsKey(pathString))
+				return commitPaths.get(commitId).get(pathString);
+		Map<String, String> map = new java.util.HashMap<String, String>();
+		commitMap.put(commitId, map);
+		Map<String, String> paths = new java.util.HashMap<String, String>();
+		commitPaths.put(commitId, paths);
+		List<String> parents = new java.util.ArrayList<String>();
+		commitParents.put(commitId, parents);
+		String objectId;
+		TreeWalk treeWalk = null;
+		try {
+			RevCommit commit = repo.parseCommit(repo.resolve(commitId));
+			treeWalk = TreeWalk.forPath(repo, pathString, commit.getTree());
+			objectId = treeWalk != null ? treeWalk.getObjectId(0).name() : null;
+			map.put(COMMIT_ID, commitId);
+			map.put(COMMIT_TIME, new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime())));
+			map.put(FULL_MESSAGE, commit.getFullMessage());
+			paths.put(pathString, objectId);
+			for (int i = 0; i < commit.getParentCount(); i++) // ant-2*6-7
+				parents.add(commit.getParent(i).name());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (treeWalk != null)
+				treeWalk.close();
+		}
+		return objectId;
+	}
+	private class ObjectComparator implements java.util.Comparator<Map<String, String>> {
+		@Override
+		public int compare(Map<String, String> m1, Map<String, String> m2) {
+			return m2.get(COMMIT_TIME).compareTo(m1.get(COMMIT_TIME));
+		}
+	}
 }
 	private RepoCache repoCache = new RepoCache();
 	public List<String> commitsFromDate(Repository repo, Date from, Date to){
@@ -518,11 +604,13 @@ ProfileSearchEngineTest=11
 			throw new RuntimeException(e);
 		}
 		Set<String> parents = new java.util.TreeSet<String>(new CommitComparator(repo)); //:parents, set
+		long start = System.currentTimeMillis();
 		for (Ref ref : repoCache.getAllRefs(repo.getAllRefs().values())){
 			Set<String> set = repoCache.getAllRefsParent(repo, ref.getName(), from, to, true, null); //:parents, set
 			if (set != null && set.size() > 0)
 				parents.addAll(set);
 		}
+		System.out.printf("repoCache.getAllRefsParent [%s] = %s\n", repo, System.currentTimeMillis() - start);
 		// important-1*4-3: getAllRefsParent=getAllRefs+RevWalk
 		List<String> testList = new java.util.LinkedList<String>(parents);
 		Set<String> testSet = new HashSet<String>();
@@ -571,14 +659,18 @@ ProfileSearchEngineTest=11
 				baos.flush(); // no-op?
 				map.put(entry.toString().replace("DiffEntry", parent != null ? parent.name().substring(0, 6) : "null"),
 						new String(baos.toByteArray()));
+/* System.out
 				System.out.println(new String(baos.toByteArray())); //
+*/
 				baos.reset();
 			}
 				parents.add(parent != null ? parent.name().substring(0, 6) : null);
 			}
 			map.put("_1:commitTime", new java.text.SimpleDateFormat(GitRepo.DATE_FORMAT).format(getCommitTime(commit.getCommitTime())));
 			map.put("_2:fullMessage", commit.getFullMessage());
+			long start = System.currentTimeMillis();
 			map.put("_3:refs", repoCache.getAllRefsByCommit(repo, objectId).toString());
+			System.out.printf("repoCache.getAllRefsByCommit [%s] = %s\n", repo, System.currentTimeMillis() - start);
 			map.put("_4:parents", parents.toString());
 		} catch (IncorrectObjectTypeException e) {
 			throw new RuntimeException(e);
@@ -672,6 +764,10 @@ ProfileSearchEngineTest=11
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		list = repoCache.getAllRefsFileHis(repo, pathString);
+		for (Map<String, String> map : list)
+			if (map.get(OBJECT_ID) == null)
+				map.put(OBJECT_ID, "000000");
 		return list;
 	}
 	public java.io.InputStream getGitFile(Repository repo, String pathString, String commitId, String objectId){ // getGit
